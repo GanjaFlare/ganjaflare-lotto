@@ -308,20 +308,26 @@
     }
 
     function shareOnX() {
-        let text = "";
-        const tagsText = "\n\n$GANJA $FLR $XRP #FlareNetwork";
-        
+        let mainText = "";
         if (lastLottoTier === "No Luck") {
-            text = `[TEST MODE] Played the GanjaFlare Daily Lotto today! No luck this time! 🎰👀\n\nTry the demo here:\n` + tagsText;
+            mainText = `[TEST MODE] Played the GanjaFlare Daily Lotto today! No luck this time! 🎰👀`;
         } else if (lastLottoTier === "Mythic" || lastLottoTier === "Legendary") {
-            text = `🎉 [TEST MODE] Hit the ${lastLottoTier} chest and simulated winning ${lastLottoAmount} $GANJA! 💎🔥\n\nTry the demo here:\n` + tagsText;
+            mainText = `🎉 [TEST MODE] Hit the ${lastLottoTier} chest and simulated winning ${lastLottoAmount} $GANJA! 💎🔥`;
         } else {
-            text = `✨ [TEST MODE] Simulated winning ${lastLottoAmount} $GANJA in the GanjaFlare Daily Lotto! 🎁\n\nTry the demo here:\n` + tagsText;
+            mainText = `✨ [TEST MODE] Simulated winning ${lastLottoAmount} $GANJA in the GanjaFlare Daily Lotto! 🎁`;
         }
 
-        const siteUrl = "https://ganjaflare-lotto.vercel.app"; 
-        const xUrl = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(siteUrl)}`;
-        window.open(xUrl, '_top');
+        // 👑 マーフさんの仕組みに完全対応：URLパラメータを分けず、文章の中に最初から合体させる
+        const siteUrl = "https://ganjaflare-lotto.vercel.app/";
+        const tagsText = "$GANJA $FLR $XRP #FlareNetwork";
+        
+        const fullMessage = `${mainText}\n\n🎰 Play here: ${siteUrl}\n\n${tagsText}`;
+
+        // 👑 「x.com」ではなく、アプリの起動記憶を確実に呼び戻す「twitter.com/intent/tweet」を使用
+        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullMessage)}`;
+        
+        // 自身の画面からXアプリへ直接処理をバトンタッチ
+        window.open(xUrl, '_self');
     }
 
     function resetGame() {

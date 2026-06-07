@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GanjaFlare Daily Lotto</title>
+    <title>GanjaFlare Daily Lotto (Test Mode)</title>
 
-    <!-- 🖼️ OGP & X (Twitter) Card 設定 -->
     <meta property="og:url" content="https://ganjaflare-lotto.vercel.app">
     <meta property="og:type" content="website">
     <meta property="og:title" content="GanjaFlare Daily Lotto 🎰">
     <meta property="og:description" content="Open the lucky chest daily at 12:00 UTC and win up to 2,000 $GANJA!">
     <meta property="og:image" content="https://ganjaflare-lotto.vercel.app/ogp-image.jpg">
     
-    <!-- X専用の設定（綺麗に独立させました） -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="GanjaFlare Daily Lotto 🎰">
     <meta name="twitter:description" content="Open the lucky chest daily at 12:00 UTC and win up to 2,000 $GANJA!">
@@ -134,8 +132,8 @@
         .countdown-timer {
             margin-top: 12px;
             font-size: 13px;
-            color: #64748b;
-            font-weight: 500;
+            color: #c0392b;
+            font-weight: bold;
         }
         .btn-google {
             background: #ffffff;
@@ -177,6 +175,7 @@
 
 <div class="container">
     <h1>GanjaFlare Daily Lotto</h1>
+    <div style="font-size: 12px; color: #7f8c8d; margin-top: -15px; margin-bottom: 20px; font-weight: bold;">⚠️ TEST MODE (No Real Rewards)</div>
     
     <div id="login-area">
         <p style="color: #636e72; margin-bottom: 30px; font-size: 15px;">Please sign in with Google to play the daily lotto.</p>
@@ -200,7 +199,7 @@
         </div>
 
         <button class="btn-open" id="openBtn" onclick="startLotto()">OPEN CHEST</button>
-        <div class="countdown-timer" id="countdownTimer">Next reset in: --h --m --s</div>
+        <div class="countdown-timer" id="countdownTimer">[TEST MODE] 1-day restriction disabled.</div>
     </div>
 
     <div class="result-screen" id="resultScreen">
@@ -212,14 +211,12 @@
             Share on X
         </button>
 
-        <button class="btn-open" onclick="resetGame()">PLAY AGAIN</button>
+        <button class="btn-open" onclick="resetGame()">PLAY AGAIN (TEST NEXT)</button>
     </div>
 </div>
 
 <script>
     let userLoggedInEmail = "";
-    let hasPlayedToday = false;
-    
     let lastLottoTier = "";
     let lastLottoAmount = 0;
 
@@ -232,59 +229,6 @@
         const video = document.getElementById('chestVideo');
         video.load();
         video.currentTime = 0;
-        
-        startCountdown();
-        checkButtonStatus();
-    }
-
-    function checkButtonStatus() {
-        const openBtn = document.getElementById('openBtn');
-        const walletInput = document.getElementById('walletAddress');
-        
-        if (hasPlayedToday) {
-            openBtn.disabled = true;
-            openBtn.innerText = "ALREADY PLAYED TODAY";
-            walletInput.disabled = true;
-            walletInput.placeholder = "Come back after 12:00 UTC";
-        } else {
-            openBtn.disabled = false;
-            openBtn.innerText = "OPEN CHEST";
-            walletInput.disabled = false;
-            walletInput.placeholder = "0x...";
-        }
-    }
-
-    function startCountdown() {
-        setInterval(() => {
-            const now = new Date();
-            let targetUTC = new Date(Date.UTC(
-                now.getUTCFullYear(),
-                now.getUTCMonth(),
-                now.getUTCDate(),
-                12, 0, 0
-            ));
-
-            if (now.getTime() >= targetUTC.getTime()) {
-                targetUTC.setUTCDate(targetUTC.getUTCDate() + 1);
-            }
-
-            const diff = targetUTC.getTime() - now.getTime();
-
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            const hStr = String(hours).padStart(2, '0');
-            const mStr = String(minutes).padStart(2, '0');
-            const sStr = String(seconds).padStart(2, '0');
-
-            document.getElementById('countdownTimer').innerText = `Next reset in: ${hStr}h ${mStr}m ${sStr}s (12:00 UTC)`;
-            
-            if (diff <= 1000 && hasPlayedToday) {
-                hasPlayedToday = false;
-                checkButtonStatus();
-            }
-        }, 1000);
     }
 
     function startLotto() {
@@ -304,8 +248,6 @@
         video.onended = () => {
             document.getElementById('game-form').style.display = 'none';
             document.getElementById('resultScreen').style.display = 'block';
-            
-            hasPlayedToday = true;
 
             const rand = Math.random() * 100;
             let tier = "";
@@ -316,27 +258,27 @@
             if (rand < 0.5) {
                 tier = "Mythic";
                 amount = 2000;
-                amountText = "🎉 You won 2,000 $GANJA! 🎉";
+                amountText = "🎉 [TEST] You won 2,000 $GANJA! 🎉";
                 color = "#d32f2f";
             } else if (rand < 2.0) {
                 tier = "Legendary";
                 amount = 500;
-                amountText = "🔥 You won 500 $GANJA! 🔥";
+                amountText = "🔥 [TEST] You won 500 $GANJA! 🔥";
                 color = "#f57c00";
             } else if (rand < 7.0) {
                 tier = "Epic";
                 amount = 100;
-                amountText = "✨ You won 100 $GANJA! ✨";
+                amountText = "✨ [TEST] You won 100 $GANJA! ✨";
                 color = "#7b1fa2";
             } else if (rand < 20.0) {
                 tier = "Rare";
                 amount = 30;
-                amountText = "You won 30 $GANJA!";
+                amountText = "[TEST] You won 30 $GANJA!";
                 color = "#1976d2";
             } else if (rand < 50.0) {
                 tier = "Common";
                 amount = 10;
-                amountText = "You won 10 $GANJA!";
+                amountText = "[TEST] You won 10 $GANJA!";
                 color = "#388e3c";
             } else {
                 tier = "No Luck";
@@ -355,35 +297,33 @@
         };
     }
 
-    /**
-     * 🚀 X（Twitter）共有ポップアップを開く関数
-     */
     function shareOnX() {
         let text = "";
-        
-        // 🚨 社長ご指定のキャッシュタグ＆ハッシュタグを末尾に直接セット
         const tagsText = "\n\n$GANJA $FLR $XRP #FlareNetwork";
         
         if (lastLottoTier === "No Luck") {
-            text = `Opened the GanjaFlare Daily Lotto today! No luck this time, better luck tomorrow! 🎰👀\n\nTry your luck daily at 12:00 UTC!\n` + tagsText;
+            text = `[TEST MODE] Played the GanjaFlare Daily Lotto today! No luck this time! 🎰👀\n\nTry the demo here:\n` + tagsText;
         } else if (lastLottoTier === "Mythic" || lastLottoTier === "Legendary") {
-            text = `🎉 OMG!! I just hit the ${lastLottoTier} chest and won ${lastLottoAmount} $GANJA! 💎🔥\n\nTest your luck daily at 12:00 UTC!\n` + tagsText;
+            text = `🎉 [TEST MODE] Hit the ${lastLottoTier} chest and simulated winning ${lastLottoAmount} $GANJA! 💎🔥\n\nTry the demo here:\n` + tagsText;
         } else {
-            text = `✨ I just won ${lastLottoAmount} $GANJA in the GanjaFlare Daily Lotto! 🎁\n\nOpen the chest daily at 12:00 UTC!\n` + tagsText;
+            text = `✨ [TEST MODE] Simulated winning ${lastLottoAmount} $GANJA in the GanjaFlare Daily Lotto! 🎁\n\nTry the demo here:\n` + tagsText;
         }
 
         const siteUrl = "https://ganjaflare-lotto.vercel.app"; 
-
-        // 🚨 XのIntent URLは、テキストの中に直接 $マーク や #マーク を入れて丸ごとエンコードするのが確実です
         const xUrl = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(siteUrl)}`;
-        
         window.open(xUrl, '_blank');
     }
 
     function resetGame() {
         document.getElementById('game-form').style.display = 'block';
         document.getElementById('resultScreen').style.display = 'none';
-        checkButtonStatus();
+        
+        // 🛠️ ボタンと入力を常に復活させ、無限に遊べるようにします
+        const openBtn = document.getElementById('openBtn');
+        const walletInput = document.getElementById('walletAddress');
+        openBtn.disabled = false;
+        openBtn.innerText = "OPEN CHEST";
+        walletInput.disabled = false;
         
         const video = document.getElementById('chestVideo');
         video.currentTime = 0;

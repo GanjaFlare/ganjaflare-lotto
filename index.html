@@ -37,7 +37,7 @@
             border-radius: 20px;
             padding: 30px 20px;
             width: 100%;
-            max-width: 400px; /* スマホに最適な最大幅 */
+            max-width: 400px;
             text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
@@ -69,14 +69,13 @@
             color: #1a1d20;
             font-size: 15px;
             transition: border-color 0.2s;
-            -webkit-appearance: none; /* iOS特有のバグ防止 */
+            -webkit-appearance: none;
         }
         input:focus {
             outline: none;
             border-color: #2e7d32;
             background-color: #ffffff;
         }
-        /* 📱 スマホ画面で宝箱がはみ出さないように自動伸縮化 */
         .chest-box {
             width: 100%;
             max-width: 320px;
@@ -92,13 +91,12 @@
             height: 100%;
             object-fit: contain;
         }
-        /* 🎁 準備した横長画像を綺麗に表示する結果表示エリア */
         .result-image-box {
             width: 100%;
             margin-bottom: 20px;
             border-radius: 10px;
             overflow: hidden;
-            display: none; /* 初期は非表示 */
+            display: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         #resultImgTag {
@@ -106,7 +104,6 @@
             height: auto;
             display: block;
         }
-
         .btn-open {
             background: linear-gradient(135deg, #2e7d32, #1b5e20);
             color: white;
@@ -168,31 +165,18 @@
             display: none;
             margin-top: 20px;
         }
-        .result-tier {
-            font-size: 32px;
-            font-weight: 900;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
         #game-form {
             display: none;
         }
-
-        /* 💡 Googleサイトなどの埋め込み（iFrame）時でも綺麗に収める調整 */
         @media (max-width: 480px) {
-            body {
-                padding: 5px;http://googleusercontent.com/image_generation_content/0
-
-* container {
+            body { padding: 5px; }
+            .container {
                 padding: 20px 15px;
                 border-radius: 15px;
-                border: none; /* スマホ時は枠線を消してスッキリ */
-                box-shadow: none; /* 背景に馴染ませる */
+                border: none;
+                box-shadow: none;
             }
-            h1 {
-                font-size: 20px;
-            }
+            h1 { font-size: 20px; }
         }
     </style>
 </head>
@@ -227,7 +211,6 @@
         </div>
 
         <div style="font-size: 11px; color: #7f8c8d; margin-bottom: 5px; font-weight: bold;">⚠️ TEST MODE (No Real Rewards)</div>
-
         <div class="countdown-timer" id="countdownTimer">[TEST MODE] 1-day restriction disabled.</div>
     </div>
 
@@ -251,7 +234,8 @@
     let userLoggedInEmail = "";
     let lastLottoTier = "";
     let lastLottoAmount = 0;
-    let shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/"; // 初期値はトップページ
+    // 💡 スラッシュなしのベースURLにして、Xのカード認識バグを防ぎます
+    let shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app"; 
 
     function loginWithGoogle() {
         userLoggedInEmail = "ceo_test@gmail.com"; 
@@ -286,73 +270,62 @@
             let tier = "";
             let amount = 0;
             let amountText = "";
-            let color = "#1a1d20";
             
-            // 🖼️ 画像切り替え用の設定
             const imgBox = document.getElementById('resultImageBox');
             const imgTag = document.getElementById('resultImgTag');
-            imgBox.style.display = 'block'; // 画像エリアを表示
-            shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/"; // 初期リセット
+            imgBox.style.display = 'block';
+            
+            // 💡 ここもスラッシュなしにリセット
+            shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app"; 
 
             if (rand < 0.5) {
-                tier = "Mythic";
-                amount = 2000;
+                tier = "Mythic"; amount = 2000;
                 amountText = "🎉 [TEST] You won 2,000 $GANJA! 🎉";
-                imgTag.src = "mythic.jpg"; // 🖼️ Mythic画像を設定
-                shareUrlForThisResult += "mythic.html"; // 🔗 X用ページを指定
+                imgTag.src = "mythic.jpg";
+                shareUrlForThisResult += "/mythic.html"; // 👉 正しく /mythic.html に結合
             } else if (rand < 2.0) {
-                tier = "Legendary";
-                amount = 500;
+                tier = "Legendary"; amount = 500;
                 amountText = "🔥 [TEST] You won 500 $GANJA! 🔥";
-                imgTag.src = "legendary.jpg"; // 🖼️ Legendary画像を設定
-                shareUrlForThisResult += "legendary.html"; // 🔗 X用ページを指定
+                imgTag.src = "legendary.jpg";
+                shareUrlForThisResult += "/legendary.html";
             } else if (rand < 7.0) {
-                tier = "Epic";
-                amount = 100;
+                tier = "Epic"; amount = 100;
                 amountText = "✨ [TEST] You won 100 $GANJA! ✨";
-                imgTag.src = "epic.jpg"; // 🖼️ Epic画像を設定
-                shareUrlForThisResult += "epic.html"; // 🔗 X用ページを指定
+                imgTag.src = "epic.jpg";
+                shareUrlForThisResult += "/epic.html";
             } else if (rand < 20.0) {
-                tier = "Rare";
-                amount = 30;
+                tier = "Rare"; amount = 30;
                 amountText = "[TEST] You won 30 $GANJA!";
-                imgTag.src = "rare.jpg"; // 🖼️ Rare画像を設定
-                shareUrlForThisResult += "rare.html"; // 🔗 X用ページを指定
+                imgTag.src = "rare.jpg";
+                shareUrlForThisResult += "/rare.html";
             } else if (rand < 50.0) {
-                tier = "Common";
-                amount = 10;
+                tier = "Common"; amount = 10;
                 amountText = "[TEST] You won 10 $GANJA!";
-                imgTag.src = "common.jpg"; // 🖼️ Common画像を設定
-                shareUrlForThisResult += "common.html"; // 🔗 X用ページを指定
+                imgTag.src = "common.jpg";
+                shareUrlForThisResult += "/common.html";
             } else {
-                tier = "No Luck";
-                amount = 0;
+                tier = "No Luck"; amount = 0;
                 amountText = "Better luck tomorrow!";
-                imgTag.src = "noluck.jpg"; // 🖼️ Noluck画像を設定
-                shareUrlForThisResult += "noluck.html"; // 🔗 X用ページを指定
+                imgTag.src = "noluck.jpg";
+                shareUrlForThisResult += "/noluck.html";
             }
             
             lastLottoTier = tier;
             lastLottoAmount = amount;
-
             document.getElementById('resultAmount').innerText = amountText;
         };
     }
 
     function shareOnX() {
-    const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
-    
-    // メッセージ本文の組み立て（最後の改行を削ります）
-    const messageText = `🎰 [TEST MODE] Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}\n\n(Note: This is a demo. No real rewards.)`;
+        const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
+        const messageText = `🎰 [TEST MODE] Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}\n\n(Note: This is a demo. No real rewards.)`;
 
-    // 本文のすぐ後ろに「半角スペース + URL」という形で1本の文字列に合体させます
-    const fullTweetText = messageText + " " + shareUrlForThisResult;
-
-    // textパラメータにURLまで含めて1本で渡す（&url= は使いません）
-    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullTweetText)}`;
-    
-    window.open(xUrl, '_self');
-}
+        // 💡 王道のシェアパラメータ「&url=」を使い、本文の「text=」から完全に切り離します。
+        // これにより、Xの仕様でテキスト内のURL文字列を100%消し去り、カードだけにスッキリ一本化できます！
+        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(messageText)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
+        
+        window.open(xUrl, '_blank'); // 💡 新しいタブで開くようにし、より自然な体験に調整
+    }
 
     function resetGame() {
         document.getElementById('game-form').style.display = 'block';
@@ -368,7 +341,6 @@
         video.currentTime = 0;
         video.pause();
 
-        // 🖼️ 画像エリアを非表示に戻す
         document.getElementById('resultImageBox').style.display = 'none';
         document.getElementById('resultImgTag').src = "";
     }

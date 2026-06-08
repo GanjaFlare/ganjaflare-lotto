@@ -1,83 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GanjaFlare Daily Lotto 🎰</title>
     <style>
+        /* 社長が元々設定されていた背景色やデザインの雰囲気に戻しています */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e0036 0%, #11001c 100%);
-            color: #fff;
+            background-color: #0b141a; /* 元の落ち着いたダークカラー */
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             text-align: center;
-            padding: 50px 20px;
-            margin: 0;
+            padding: 40px 20px;
         }
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #15222e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        h1 { color: #00ffcc; font-size: 2.5em; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,255,204,0.5); }
-        p { color: #bbb; font-size: 1.1em; }
+        h1 { color: #fff; margin-bottom: 20px; }
         
-        .btn-lotto {
-            background: linear-gradient(45deg, #00ffcc, #0099ff);
-            color: #11001c;
-            border: none;
-            padding: 18px 40px;
-            font-size: 1.5em;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4);
-            transition: all 0.3s ease;
-            margin: 20px auto;
-            display: block;
+        /* 元のアドレス入力欄 */
+        .address-input {
+            width: 80%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #30475e;
+            background-color: #222831;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
         }
-        .btn-lotto:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 255, 204, 0.6); }
 
-        .result-box { display: none; margin-top: 30px; animation: fadeIn 1s ease; }
-        .result-img { max-width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        /* 元のスタートボタン */
+        .btn-start {
+            background-color: #00adb5;
+            color: #fff;
+            border: none;
+            padding: 14px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-start:hover { background-color: #008c95; }
+
+        /* 🎥 宝箱の演出動画エリア */
+        .video-container {
+            display: none;
+            margin: 20px auto;
+            max-width: 100%;
+        }
+        video {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        /* 🎁 結果表示エリア */
+        .result-box {
+            display: none;
+            margin-top: 25px;
+        }
+        .result-img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
         .btn-share {
             display: inline-block;
             background-color: #1d9bf0;
             color: white;
             text-decoration: none;
-            padding: 12px 28px;
+            padding: 12px 30px;
             font-weight: bold;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(29, 155, 240, 0.4);
-            transition: all 0.3s ease;
+            border-radius: 25px;
+            margin-top: 15px;
         }
-        .btn-share:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(29, 155, 240, 0.6); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>GanjaFlare Daily Lotto</h1>
-    <p>Test your luck today and win simulated $GANJA!</p>
+    <p>ウォレットアドレスを入力して宝箱を開けよう！</p>
     
-    <button id="lottoButton" class="btn-lotto" onclick="playLotto()">🎰 OPEN CHEST 🎰</button>
+    <input type="text" id="userWalletAddress" class="address-input" placeholder="0xから始まるアドレスを入力してください">
+    <br>
+    <button id="startButton" class="btn-start" onclick="startLotto()">🎰 START 🎰</button>
+
+    <div id="videoContainer" class="video-container">
+        <video id="lottoVideo" src="./chest_open.mp4" muted playsinline></video>
+    </div>
 
     <div id="resultBox" class="result-box">
-        <h2 id="resultTitle" style="color: #fff;"></h2>
+        <h2 id="resultTitle"></h2>
         <img id="resultImage" class="result-img" src="" alt="Result">
         <br>
-        <a id="shareXButton" class="btn-share" href="#" target="_blank">𝕏 Share on X to Spread the Word!</a>
+        <a id="shareXButton" class="btn-share" href="#" target="_blank">𝕏 結果をポストして広める！</a>
     </div>
 </div>
 
 <script>
-    function playLotto() {
-        // 🎲 ブラウザ側で安全に確率計算（以前のロジックを100%継承）
+    function startLotto() {
+        const address = document.getElementById("userWalletAddress").value.trim();
+        if (!address.startsWith("0x") || address.length !== 42) {
+            alert("正しいウォレットアドレスを入力してください。");
+            return;
+        }
+
+        // 画面をすっきりさせて動画演出を開始
+        document.getElementById("startButton").style.display = "none";
+        document.getElementById("resultBox").style.display = "none";
+        const videoContainer = document.getElementById("videoContainer");
+        const video = document.getElementById("lottoVideo");
+
+        videoContainer.style.display = "block";
+        video.currentTime = 0;
+        video.play();
+
+        // 🎥 動画が再生終了（終わったら結果を出す元のフロー）
+        video.onended = function() {
+            videoContainer.style.display = "none";
+            document.getElementById("startButton").style.display = "inline-block";
+            
+            // 確率計算を実行
+            determineResult();
+        };
+    }
+
+    function determineResult() {
         const randomNumber = Math.random() * 100;
         let tier = "No Luck";
 
@@ -99,6 +155,7 @@
     }
 
     function showFinalResult(tier) {
+        // 等賞ごとのデータ設定
         const tierData = {
             "Mythic": { title: "💎 🎉 MYTHIC WIN!", file: "mythic", text: "Hits the Mythic chest in the Daily Lotto and simulated winning 2,000 $GANJA!" },
             "Legendary": { title: "✨ 🔥 LEGENDARY WIN!", file: "legendary", text: "Hits the Legendary chest in the Daily Lotto and simulated winning 500 $GANJA!" },
@@ -113,7 +170,7 @@
         document.getElementById("resultTitle").innerText = result.title;
         document.getElementById("resultImage").src = `./${result.file}.jpg`;
         
-        // 𝕏 (X)のシェアリンク（作った小文字HTMLとバチッと連動）
+        // 𝕏 (X)のシェアリンク（先ほど作成した専用小文字HTMLへの動的リンク）
         const shareUrl = `https://ganjaflare-lotto.vercel.app/${result.file}.html`;
         const postText = `${result.title}\n\n${result.text}\n\n▼ Play Here:\n`;
         

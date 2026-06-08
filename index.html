@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GanjaFlare Daily Lotto (Test Mode)</title>
 
-    <meta property="og:url" content="https://ganjaflare-lotto.vercel.app">
+    <meta property="og:url" content="https://ganjaflare-lotto.vercel.app/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="GanjaFlare Daily Lotto 🎰">
     <meta property="og:description" content="Open the lucky chest daily at 12:00 UTC and win up to 2,000 $GANJA!">
@@ -92,6 +92,21 @@
             height: 100%;
             object-fit: contain;
         }
+        /* 🎁 準備した横長画像を綺麗に表示する結果表示エリア */
+        .result-image-box {
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none; /* 初期は非表示 */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        #resultImgTag {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         .btn-open {
             background: linear-gradient(135deg, #2e7d32, #1b5e20);
             color: white;
@@ -167,9 +182,9 @@
         /* 💡 Googleサイトなどの埋め込み（iFrame）時でも綺麗に収める調整 */
         @media (max-width: 480px) {
             body {
-                padding: 5px;
-            }
-            .container {
+                padding: 5px;http://googleusercontent.com/image_generation_content/0
+
+* container {
                 padding: 20px 15px;
                 border-radius: 15px;
                 border: none; /* スマホ時は枠線を消してスッキリ */
@@ -217,10 +232,13 @@
     </div>
 
     <div class="result-screen" id="resultScreen">
-        <div class="result-tier" id="resultTier"></div>
+        <div class="result-image-box" id="resultImageBox">
+            <img src="" alt="Result" id="resultImgTag">
+        </div>
+
         <div id="resultAmount" style="font-size: 16px; color: #1a1d20; font-weight: 500; margin-bottom: 25px;"></div>
         
-        <button class="btn-share-x" onclick="shareOnX()">
+        <button class="btn-share-x" id="shareBtn" onclick="shareOnX()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             Share on X
         </button>
@@ -233,6 +251,7 @@
     let userLoggedInEmail = "";
     let lastLottoTier = "";
     let lastLottoAmount = 0;
+    let shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/"; // 初期値はトップページ
 
     function loginWithGoogle() {
         userLoggedInEmail = "ceo_test@gmail.com"; 
@@ -268,64 +287,65 @@
             let amount = 0;
             let amountText = "";
             let color = "#1a1d20";
+            
+            // 🖼️ 画像切り替え用の設定
+            const imgBox = document.getElementById('resultImageBox');
+            const imgTag = document.getElementById('resultImgTag');
+            imgBox.style.display = 'block'; // 画像エリアを表示
+            shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/"; // 初期リセット
 
             if (rand < 0.5) {
                 tier = "Mythic";
                 amount = 2000;
                 amountText = "🎉 [TEST] You won 2,000 $GANJA! 🎉";
-                color = "#d32f2f";
+                imgTag.src = "mythic.jpg"; // 🖼️ Mythic画像を設定
+                shareUrlForThisResult += "mythic.html"; // 🔗 X用ページを指定
             } else if (rand < 2.0) {
                 tier = "Legendary";
                 amount = 500;
                 amountText = "🔥 [TEST] You won 500 $GANJA! 🔥";
-                color = "#f57c00";
+                imgTag.src = "legendary.jpg"; // 🖼️ Legendary画像を設定
+                shareUrlForThisResult += "legendary.html"; // 🔗 X用ページを指定
             } else if (rand < 7.0) {
                 tier = "Epic";
                 amount = 100;
                 amountText = "✨ [TEST] You won 100 $GANJA! ✨";
-                color = "#7b1fa2";
+                imgTag.src = "epic.jpg"; // 🖼️ Epic画像を設定
+                shareUrlForThisResult += "epic.html"; // 🔗 X用ページを指定
             } else if (rand < 20.0) {
                 tier = "Rare";
                 amount = 30;
                 amountText = "[TEST] You won 30 $GANJA!";
-                color = "#1976d2";
+                imgTag.src = "rare.jpg"; // 🖼️ Rare画像を設定
+                shareUrlForThisResult += "rare.html"; // 🔗 X用ページを指定
             } else if (rand < 50.0) {
                 tier = "Common";
                 amount = 10;
                 amountText = "[TEST] You won 10 $GANJA!";
-                color = "#388e3c";
+                imgTag.src = "common.jpg"; // 🖼️ Common画像を設定
+                shareUrlForThisResult += "common.html"; // 🔗 X用ページを指定
             } else {
                 tier = "No Luck";
                 amount = 0;
                 amountText = "Better luck tomorrow!";
-                color = "#747d8c";
+                imgTag.src = "noluck.jpg"; // 🖼️ Noluck画像を設定
+                shareUrlForThisResult += "noluck.html"; // 🔗 X用ページを指定
             }
             
             lastLottoTier = tier;
             lastLottoAmount = amount;
 
-            const tierEl = document.getElementById('resultTier');
-            tierEl.innerText = tier;
-            tierEl.style.color = color;
             document.getElementById('resultAmount').innerText = amountText;
         };
     }
 
     function shareOnX() {
-        let mainText = "";
-        if (lastLottoTier === "No Luck") {
-            mainText = `[TEST MODE] Played the GanjaFlare Daily Lotto today! No luck this time! 🎰👀`;
-        } else if (lastLottoTier === "Mythic" || lastLottoTier === "Legendary") {
-            mainText = `🎉 [TEST MODE] Hit the ${lastLottoTier} chest and simulated winning ${lastLottoAmount} $GANJA! 💎🔥`;
-        } else {
-            mainText = `✨ [TEST MODE] Simulated winning ${lastLottoAmount} $GANJA in the GanjaFlare Daily Lotto! 🎁`;
-        }
+        // マーフさんのロジックをそのまま活用（twitter.com/intent/tweet）
+        const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
+        const fullMessage = `🎰 [TEST MODE] Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}\n\n(Note: This is a demo. No real rewards.)`;
 
-        const siteUrl = "https://ganjaflare-lotto.vercel.app/";
-        const tagsText = "$GANJA $FLR $XRP #FlareNetwork";
-        
-        const fullMessage = `${mainText}\n\n🎰 Play here: ${siteUrl}\n\n${tagsText}`;
-        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullMessage)}`;
+        // 👑 リンク先を「今回の当たった画像の専用ページ」にしてジャンプさせる！
+        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullMessage)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
         
         window.open(xUrl, '_self');
     }
@@ -343,6 +363,10 @@
         const video = document.getElementById('chestVideo');
         video.currentTime = 0;
         video.pause();
+
+        // 🖼️ 画像エリアを非表示に戻す
+        document.getElementById('resultImageBox').style.display = 'none';
+        document.getElementById('resultImgTag').src = "";
     }
 </script>
 

@@ -2,371 +2,249 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GanjaFlare Daily Lotto (Test Mode)</title>
-
-    <meta property="og:url" content="https://ganjaflare-lotto.vercel.app/">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="GanjaFlare Daily Lotto 🎰">
-    <meta property="og:description" content="Open the lucky chest daily at 12:00 UTC and win up to 2,000 $GANJA!">
-    <meta property="og:image" content="https://ganjaflare-lotto.vercel.app/ogp-image.jpg">
-    
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="GanjaFlare Daily Lotto 🎰">
-    <meta name="twitter:description" content="Open the lucky chest daily at 12:00 UTC and win up to 2,000 $GANJA!">
-    <meta name="twitter:image" content="https://ganjaflare-lotto.vercel.app/ogp-image.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GanjaFlare Daily Lotto 🎰</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
         body {
-            background-color: #f5f7fb;
-            color: #1a1d20;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e0036 0%, #11001c 100%);
+            color: #fff;
+            text-align: center;
+            padding: 50px 20px;
             margin: 0;
-            padding: 10px;
         }
         .container {
-            background: #ffffff;
-            border: 1px solid #e1e4e8;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
             border-radius: 20px;
-            padding: 30px 20px;
-            width: 100%;
-            max-width: 400px; /* スマホに最適な最大幅 */
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        h1 {
-            font-size: 22px;
-            margin-top: 5px;
-            margin-bottom: 25px;
-            color: #2e7d32;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        label {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 8px;
-            color: #636e72;
-            font-weight: 500;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #dcdde1;
-            background-color: #fafbfc;
-            color: #1a1d20;
-            font-size: 15px;
-            transition: border-color 0.2s;
-            -webkit-appearance: none; /* iOS特有のバグ防止 */
-        }
-        input:focus {
-            outline: none;
-            border-color: #2e7d32;
-            background-color: #ffffff;
-        }
-        /* 📱 スマホ画面で宝箱がはみ出さないように自動伸縮化 */
-        .chest-box {
-            width: 100%;
-            max-width: 320px;
-            aspect-ratio: 1 / 1;
-            margin: 0 auto 20px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        /* 🎁 準備した横長画像を綺麗に表示する結果表示エリア */
-        .result-image-box {
-            width: 100%;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            display: none; /* 初期は非表示 */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        #resultImgTag {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .btn-open {
-            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+        h1 { color: #00ffcc; font-size: 2.5em; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,255,204,0.5); }
+        p { color: #bbb; font-size: 1.1em; }
+        
+        /* 🦊 ウォレット接続ボタン */
+        .btn-wallet {
+            background: linear-gradient(45deg, #f6851b, #e2761b);
             color: white;
             border: none;
-            padding: 14px 20px;
-            font-size: 16px;
+            padding: 12px 24px;
+            font-size: 1.1em;
             font-weight: bold;
-            border-radius: 30px;
+            border-radius: 50px;
             cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(46,125,50,0.2);
-            transition: transform 0.2s, opacity 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 15px rgba(246, 133, 27, 0.4);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
         }
-        .btn-open:active {
-            transform: scale(0.98);
-        }
-        .btn-share-x {
-            background: #000000;
-            color: white;
+        .btn-wallet:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(246, 133, 27, 0.6); }
+
+        /* 🎰 宝箱を開けるボタン */
+        .btn-lotto {
+            background: linear-gradient(45deg, #00ffcc, #0099ff);
+            color: #11001c;
             border: none;
-            padding: 12px 20px;
-            font-size: 15px;
+            padding: 18px 40px;
+            font-size: 1.5em;
             font-weight: bold;
-            border-radius: 30px;
+            border-radius: 50px;
             cursor: pointer;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4);
+            transition: all 0.3s ease;
+            display: none; /* 初期状態は隠す（ウォレット接続で表示） */
+            margin: 20px auto;
         }
-        .countdown-timer {
-            margin-top: 10px;
-            font-size: 13px;
-            color: #c0392b;
-            font-weight: bold;
-        }
-        .btn-google {
-            background: #ffffff;
-            color: #444;
-            border: 1px solid #747d8c;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .result-screen {
-            display: none;
-            margin-top: 20px;
-        }
-        .result-tier {
-            font-size: 32px;
-            font-weight: 900;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        #game-form {
-            display: none;
-        }
+        .btn-lotto:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 255, 204, 0.6); }
+        .btn-lotto:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; transform: none; }
 
-        /* 💡 Googleサイトなどの埋め込み（iFrame）時でも綺麗に収める調整 */
-        @media (max-width: 480px) {
-            body {
-                padding: 5px;http://googleusercontent.com/image_generation_content/0
+        .status { margin-top: 15px; font-weight: bold; color: #ff007f; }
 
-* container {
-                padding: 20px 15px;
-                border-radius: 15px;
-                border: none; /* スマホ時は枠線を消してスッキリ */
-                box-shadow: none; /* 背景に馴染ませる */
-            }
-            h1 {
-                font-size: 20px;
-            }
+        /* 🎁 結果表示エリア */
+        .result-box { display: none; margin-top: 30px; animation: fadeIn 1s ease; }
+        .result-img { max-width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .btn-share {
+            display: inline-block;
+            background-color: #1d9bf0;
+            color: white;
+            text-decoration: none;
+            padding: 12px 28px;
+            font-weight: bold;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(29, 155, 240, 0.4);
+            transition: all 0.3s ease;
         }
+        .btn-share:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(29, 155, 240, 0.6); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>GanjaFlare Daily Lotto</h1>
+    <p>Connect your MetaMask, test your luck on Coston2, and win simulated $GANJA!</p>
     
-    <div id="login-area">
-        <div style="font-size: 11px; color: #7f8c8d; margin-top: -15px; margin-bottom: 20px; font-weight: bold;">⚠️ TEST MODE (No Real Rewards)</div>
-        <p style="color: #636e72; margin-bottom: 25px; font-size: 14px; line-height: 1.4;">Please sign in with Google to play the daily lotto.</p>
-        <button class="btn-google" onclick="loginWithGoogle()">
-            <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.79 2.7v2.25h2.9c1.69-1.55 2.69-3.83 2.69-6.58z" fill="#4285F4"/><path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.25c-.8.54-1.83.86-3.06.86-2.35 0-4.34-1.58-5.05-3.71H.92v2.33C2.4 16.03 5.42 18 9 18z" fill="#34A853"/><path d="M3.95 10.72A5.4 5.4 0 0 1 3.6 9c0-.6.1-1.17.25-1.72V4.95H.92A8.99 8.99 0 0 0 0 9c0 1.45.35 2.82.97 4.05l2.98-2.33z" fill="#FBBC05"/><path d="M9 3.58c1.32 0 2.5.45 3.44 1.35L15 2.3C13.46.94 11.42 0 9 0 5.42 0 2.4 1.97.92 4.95l2.98 2.33c.71-2.13 2.7-3.71 5.05-3.71z" fill="#EA4335"/></svg>
-            Sign in with Google
-        </button>
-    </div>
-    
-    <div id="game-form">
-        <div class="input-group">
-            <label>Wallet address</label>
-            <input type="text" id="walletAddress" placeholder="0x...">
-        </div>
-        
-        <div class="chest-box">
-            <video id="chestVideo" src="chest.mp4" playsinline muted></video>
-        </div>
+    <button id="connectButton" class="btn-wallet" onclick="connectWallet()">🦊 Connect MetaMask</button>
+    <div id="walletAddress" style="color: #00ffcc; margin-bottom: 20px; font-family: monospace;"></div>
 
-        <button class="btn-open" id="openBtn" onclick="startLotto()">OPEN CHEST</button>
-        
-        <div style="margin-top: 25px; margin-bottom: 5px; font-size: 13px; color: #2e7d32; font-weight: bold; word-break: break-all;">
-            Logged in as: <span id="userEmail">---</span>
-        </div>
+    <button id="lottoButton" class="btn-lotto" onclick="playLotto()">🎰 OPEN CHEST 🎰</button>
+    <div id="statusMessage" class="status"></div>
 
-        <div style="font-size: 11px; color: #7f8c8d; margin-bottom: 5px; font-weight: bold;">⚠️ TEST MODE (No Real Rewards)</div>
-
-        <div class="countdown-timer" id="countdownTimer">[TEST MODE] 1-day restriction disabled.</div>
-    </div>
-
-    <div class="result-screen" id="resultScreen">
-        <div class="result-image-box" id="resultImageBox">
-            <img src="" alt="Result" id="resultImgTag">
-        </div>
-
-        <div id="resultAmount" style="font-size: 16px; color: #1a1d20; font-weight: 500; margin-bottom: 25px;"></div>
-        
-        <button class="btn-share-x" id="shareBtn" onclick="shareOnX()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            Share on X
-        </button>
-
-        <button class="btn-open" onclick="resetGame()">PLAY AGAIN (TEST NEXT)</button>
+    <div id="resultBox" class="result-box">
+        <h2 id="resultTitle" style="color: #fff;"></h2>
+        <img id="resultImage" class="result-img" src="" alt="Result">
+        <br>
+        <a id="shareXButton" class="btn-share" href="#" target="_blank">𝕏 Share on X to Spread the Word!</a>
     </div>
 </div>
 
 <script>
-    let userLoggedInEmail = "";
-    let lastLottoTier = "";
-    let lastLottoAmount = 0;
-    let shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/"; // 初期値はトップページ
+    // 🛠️ コントラクト設定情報
+    const contractAddress = "0xf4df098B10b8098522306A9aDb664D98C647C87d";
+    const coston2ChainId = "0x72"; // Coston2のチェーンID (114)の十六進数
 
-    function loginWithGoogle() {
-        userLoggedInEmail = "ceo_test@gmail.com"; 
-        document.getElementById('userEmail').innerText = userLoggedInEmail;
-        document.getElementById('login-area').style.display = 'none';
-        document.getElementById('game-form').style.display = 'block';
+    // 社長からいただいたABIをそのまま格納
+    const contractABI = [
+        {"inputs":[{"internalType":"address","name":"_ganjaTokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"player","type":"address"},{"indexed":false,"internalType":"string","name":"tier","type":"string"},{"indexed":false,"internalType":"uint256","name":"prizeAmount","type":"uint256"}],"name":"LottoPlayed","type":"event"},
+        {"inputs":[{"internalType":"address","name":"_playerWallet","type":"address"}],"name":"openChest","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"address","name":"_newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdrawTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"ganjaToken","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"lastPlayedTime","outputs":[{"internalType":"uint256","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
+    ];
 
-        const video = document.getElementById('chestVideo');
-        video.load();
-        video.currentTime = 0;
-    }
+    let provider;
+    let signer;
+    let lottoContract;
+    let userAddress = "";
 
-    function startLotto() {
-        const address = document.getElementById('walletAddress').value;
-
-        if (!address) {
-            alert('Please enter your wallet address!');
+    // 🦊 1. ウォレットに接続する関数
+    async function connectWallet() {
+        if (!window.ethereum) {
+            alert("MetaMask is required to play this game!");
             return;
         }
-
-        document.getElementById('openBtn').disabled = true;
-        document.getElementById('walletAddress').disabled = true;
-
-        const video = document.getElementById('chestVideo');
-        video.play();
-
-        video.onended = () => {
-            document.getElementById('game-form').style.display = 'none';
-            document.getElementById('resultScreen').style.display = 'block';
-
-            const rand = Math.random() * 100;
-            let tier = "";
-            let amount = 0;
-            let amountText = "";
-            let color = "#1a1d20";
+        try {
+            document.getElementById("statusMessage").innerText = "Connecting wallet...";
             
-            // 🖼️ 画像切り替え用の設定
-            const imgBox = document.getElementById('resultImageBox');
-            const imgTag = document.getElementById('resultImgTag');
-            imgBox.style.display = 'block'; // 画像エリアを表示
-            shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/"; // 初期リセット
-
-            if (rand < 0.5) {
-                tier = "Mythic";
-                amount = 2000;
-                amountText = "🎉 [TEST] You won 2,000 $GANJA! 🎉";
-                imgTag.src = "mythic.jpg"; // 🖼️ Mythic画像を設定
-                shareUrlForThisResult += "mythic.html"; // 🔗 X用ページを指定
-            } else if (rand < 2.0) {
-                tier = "Legendary";
-                amount = 500;
-                amountText = "🔥 [TEST] You won 500 $GANJA! 🔥";
-                imgTag.src = "legendary.jpg"; // 🖼️ Legendary画像を設定
-                shareUrlForThisResult += "legendary.html"; // 🔗 X用ページを指定
-            } else if (rand < 7.0) {
-                tier = "Epic";
-                amount = 100;
-                amountText = "✨ [TEST] You won 100 $GANJA! ✨";
-                imgTag.src = "epic.jpg"; // 🖼️ Epic画像を設定
-                shareUrlForThisResult += "epic.html"; // 🔗 X用ページを指定
-            } else if (rand < 20.0) {
-                tier = "Rare";
-                amount = 30;
-                amountText = "[TEST] You won 30 $GANJA!";
-                imgTag.src = "rare.jpg"; // 🖼️ Rare画像を設定
-                shareUrlForThisResult += "rare.html"; // 🔗 X用ページを指定
-            } else if (rand < 50.0) {
-                tier = "Common";
-                amount = 10;
-                amountText = "[TEST] You won 10 $GANJA!";
-                imgTag.src = "common.jpg"; // 🖼️ Common画像を設定
-                shareUrlForThisResult += "common.html"; // 🔗 X用ページを指定
-            } else {
-                tier = "No Luck";
-                amount = 0;
-                amountText = "Better luck tomorrow!";
-                imgTag.src = "noluck.jpg"; // 🖼️ Noluck画像を設定
-                shareUrlForThisResult += "noluck.html"; // 🔗 X用ページを指定
+            // ネットワークがCoston2かチェック、違えば自動切り替え請求
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: coston2ChainId }],
+                });
+            } catch (switchError) {
+                // メタマスクにCoston2がない場合はエラーになるので手動追加を促す
+                if (switchError.code === 4902) {
+                    alert("Please add Flare Testnet Coston2 to your MetaMask first!");
+                    return;
+                }
             }
+
+            // アカウント取得
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            userAddress = accounts[0];
             
-            lastLottoTier = tier;
-            lastLottoAmount = amount;
+            // Ethers.jsのセットアップ
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = await provider.getSigner();
+            lottoContract = new ethers.Contract(contractAddress, contractABI, signer);
 
-            document.getElementById('resultAmount').innerText = amountText;
+            // 画面表示の更新
+            document.getElementById("walletAddress").innerText = `Connected: ${userAddress.substring(0,6)}...${userAddress.substring(38)}`;
+            document.getElementById("connectButton").style.display = "none";
+            document.getElementById("lottoButton").style.display = "block";
+            document.getElementById("statusMessage").innerText = "";
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById("statusMessage").innerText = "Wallet connection failed.";
+        }
+    }
+
+    // 🎰 2. ロト（スマートコントラクト）を実行する関数
+    async function playLotto() {
+        if (!lottoContract) return;
+
+        try {
+            // ボタンをロックして二重クリックを防止
+            document.getElementById("lottoButton").disabled = true;
+            document.getElementById("statusMessage").innerText = "⚡ Demanding Transaction... Please confirm in MetaMask.";
+            document.getElementById("resultBox").style.display = "none";
+
+            // スマートコントラクトの openChest 関数を実行（社長のアドレスに結果を送る指定）
+            const tx = await lottoContract.openChest(userAddress);
+            
+            document.getElementById("statusMessage").innerText = "⏳ Waiting for Block Confirmation (Mining)...";
+            
+            // ブロックチェーンに書き込まれる（承認される）のを待機
+            const receipt = await tx.wait();
+            
+            document.getElementById("statusMessage").innerText = "🎉 Transaction Confirmed! Reading Oracle Result...";
+
+            // コントラクトが放出したログ（Event）から「当たった等賞（tier）」を特定する
+            let finalTier = "No Luck";
+            for (const log of receipt.logs) {
+                try {
+                    const parsedLog = lottoContract.interface.parseLog(log);
+                    if (parsedLog && parsedLog.name === "LottoPlayed") {
+                        finalTier = parsedLog.args.tier; // コントラクトが計算した本当の等賞
+                        break;
+                    }
+                } catch (e) {
+                    // 他の無関係なログはスキップ
+                }
+            }
+
+            // 🎯 3. 確定した結果に合わせて画面とXシェアを連動させる
+            showFinalResult(finalTier);
+
+        } catch (error) {
+            console.error(error);
+            // 24時間制限のrequireに引っかかった場合のエラー処理
+            if (error.message.includes("You can only play once every 24 hours")) {
+                document.getElementById("statusMessage").innerText = "❌ Clock Locked! You can only play once every 24 hours.";
+            } else {
+                document.getElementById("statusMessage").innerText = "Transaction cancelled or failed.";
+            }
+            document.getElementById("lottoButton").disabled = false;
+        }
+    }
+
+    // 🎯 4. 結果を画面に反映し、Xシェアボタンを設定する関数
+    function showFinalResult(tier) {
+        // 等賞ごとのデータマッピング（小文字統一）
+        const tierData = {
+            "Mythic": { title: "💎 🎉 MYTHIC WIN!", file: "mythic", text: "Hits the Mythic chest in the Daily Lotto and simulated winning 2,000 $GANJA!" },
+            "Legendary": { title: "✨ 🔥 LEGENDARY WIN!", file: "legendary", text: "Hits the Legendary chest in the Daily Lotto and simulated winning 500 $GANJA!" },
+            "Epic": { title: "✨ ⚡ EPIC WIN!", file: "epic", text: "Hits the Epic chest in the Daily Lotto and simulated winning 100 $GANJA!" },
+            "Rare": { title: "🎁 🔷 RARE WIN!", file: "rare", text: "Hits the Rare chest in the Daily Lotto and simulated winning 30 $GANJA!" },
+            "Common": { title: "🎰 🟢 COMMON WIN!", file: "common", text: "Hits the Common chest in the Daily Lotto and simulated winning 10 $GANJA!" },
+            "No Luck": { title: "👀 🎰 No Luck Today", file: "noluck", text: "Played the GanjaFlare Daily Lotto today! Better luck tomorrow!" }
         };
-    }
 
-    function shareOnX() {
-        // マーフさんのロジックをそのまま活用（twitter.com/intent/tweet）
-        const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
-        const fullMessage = `🎰 [TEST MODE] Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}\n\n(Note: This is a demo. No real rewards.)`;
+        const result = tierData[tier] || tierData["No Luck"];
 
-        // 👑 リンク先を「今回の当たった画像の専用ページ」にしてジャンプさせる！
-        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullMessage)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
+        // 画面の画像とタイトルを更新
+        document.getElementById("resultTitle").innerText = result.title;
+        document.getElementById("resultImage").src = `./${result.file}.jpg`;
         
-        window.open(xUrl, '_self');
-    }
-
-    function resetGame() {
-        document.getElementById('game-form').style.display = 'block';
-        document.getElementById('resultScreen').style.display = 'none';
+        // 𝕏 (X)のシェアリンクを作成（先ほど作った専用小文字HTMLにリンクさせる！）
+        const shareUrl = `https://ganjaflare-lotto.vercel.app/${result.file}.html`;
+        const postText = `${result.title}\n\n${result.text}\n\n▼ Play Here:\n`;
         
-        const openBtn = document.getElementById('openBtn');
-        const walletInput = document.getElementById('walletAddress');
-        openBtn.disabled = false;
-        openBtn.innerText = "OPEN CHEST";
-        walletInput.disabled = false;
-        
-        const video = document.getElementById('chestVideo');
-        video.currentTime = 0;
-        video.pause();
+        document.getElementById("shareXButton").href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postText)}&url=${encodeURIComponent(shareUrl)}`;
 
-        // 🖼️ 画像エリアを非表示に戻す
-        document.getElementById('resultImageBox').style.display = 'none';
-        document.getElementById('resultImgTag').src = "";
+        // 結果ボックスを表示してボタンを元に戻す
+        document.getElementById("statusMessage").innerText = "🎰 Draw Complete!";
+        document.getElementById("resultBox").style.display = "block";
+        document.getElementById("lottoButton").disabled = false;
     }
 </script>
 

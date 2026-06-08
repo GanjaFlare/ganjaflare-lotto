@@ -340,15 +340,19 @@
     }
 
     function shareOnX() {
-        // マーフさんのロジックをそのまま活用（twitter.com/intent/tweet）
-        const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
-        const fullMessage = `🎰 [TEST MODE] Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}\n\n(Note: This is a demo. No real rewards.)`;
+    const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
+    
+    // メッセージ本文の組み立て（最後の改行を削ります）
+    const messageText = `🎰 [TEST MODE] Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}\n\n(Note: This is a demo. No real rewards.)`;
 
-        // 👑 リンク先を「今回の当たった画像の専用ページ」にしてジャンプさせる！
-        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullMessage)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
-        
-        window.open(xUrl, '_self');
-    }
+    // 本文のすぐ後ろに「半角スペース + URL」という形で1本の文字列に合体させます
+    const fullTweetText = messageText + " " + shareUrlForThisResult;
+
+    // textパラメータにURLまで含めて1本で渡す（&url= は使いません）
+    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullTweetText)}`;
+    
+    window.open(xUrl, '_self');
+}
 
     function resetGame() {
         document.getElementById('game-form').style.display = 'block';

@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GanjaFlare Daily Lotto 🎰</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
-
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -27,23 +25,6 @@
         h1 { color: #00ffcc; font-size: 2.5em; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,255,204,0.5); }
         p { color: #bbb; font-size: 1.1em; }
         
-        /* 🦊 ウォレット接続ボタン */
-        .btn-wallet {
-            background: linear-gradient(45deg, #f6851b, #e2761b);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 1.1em;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(246, 133, 27, 0.4);
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-        .btn-wallet:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(246, 133, 27, 0.6); }
-
-        /* 🎰 宝箱を開けるボタン */
         .btn-lotto {
             background: linear-gradient(45deg, #00ffcc, #0099ff);
             color: #11001c;
@@ -55,15 +36,11 @@
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4);
             transition: all 0.3s ease;
-            display: none; /* 初期状態は隠す（ウォレット接続で表示） */
             margin: 20px auto;
+            display: block;
         }
         .btn-lotto:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 255, 204, 0.6); }
-        .btn-lotto:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; transform: none; }
 
-        .status { margin-top: 15px; font-weight: bold; color: #ff007f; }
-
-        /* 🎁 結果表示エリア */
         .result-box { display: none; margin-top: 30px; animation: fadeIn 1s ease; }
         .result-img { max-width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-bottom: 20px; }
         .btn-share {
@@ -86,13 +63,9 @@
 
 <div class="container">
     <h1>GanjaFlare Daily Lotto</h1>
-    <p>Connect your MetaMask, test your luck on Coston2, and win simulated $GANJA!</p>
+    <p>Test your luck today and win simulated $GANJA!</p>
     
-    <button id="connectButton" class="btn-wallet" onclick="connectWallet()">🦊 Connect MetaMask</button>
-    <div id="walletAddress" style="color: #00ffcc; margin-bottom: 20px; font-family: monospace;"></div>
-
     <button id="lottoButton" class="btn-lotto" onclick="playLotto()">🎰 OPEN CHEST 🎰</button>
-    <div id="statusMessage" class="status"></div>
 
     <div id="resultBox" class="result-box">
         <h2 id="resultTitle" style="color: #fff;"></h2>
@@ -103,123 +76,29 @@
 </div>
 
 <script>
-    // 🛠️ コントラクト設定情報
-    const contractAddress = "0xf4df098B10b8098522306A9aDb664D98C647C87d";
-    const coston2ChainId = "0x72"; // Coston2のチェーンID (114)の十六進数
+    function playLotto() {
+        // 🎲 ブラウザ側で安全に確率計算（以前のロジックを100%継承）
+        const randomNumber = Math.random() * 100;
+        let tier = "No Luck";
 
-    // 社長からいただいたABIをそのまま格納
-    const contractABI = [
-        {"inputs":[{"internalType":"address","name":"_ganjaTokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
-        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"player","type":"address"},{"indexed":false,"internalType":"string","name":"tier","type":"string"},{"indexed":false,"internalType":"uint256","name":"prizeAmount","type":"uint256"}],"name":"LottoPlayed","type":"event"},
-        {"inputs":[{"internalType":"address","name":"_playerWallet","type":"address"}],"name":"openChest","outputs":[],"stateMutability":"nonpayable","type":"function"},
-        {"inputs":[{"internalType":"address","name":"_newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},
-        {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdrawTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
-        {"inputs":[],"name":"ganjaToken","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-        {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"lastPlayedTime","outputs":[{"internalType":"uint256","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-        {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
-    ];
-
-    let provider;
-    let signer;
-    let lottoContract;
-    let userAddress = "";
-
-    // 🦊 1. ウォレットに接続する関数
-    async function connectWallet() {
-        if (!window.ethereum) {
-            alert("MetaMask is required to play this game!");
-            return;
+        if (randomNumber < 0.5) {
+            tier = "Mythic";
+        } else if (randomNumber < 2.0) {
+            tier = "Legendary";
+        } else if (randomNumber < 7.0) {
+            tier = "Epic";
+        } else if (randomNumber < 20.0) {
+            tier = "Rare";
+        } else if (randomNumber < 50.0) {
+            tier = "Common";
+        } else {
+            tier = "No Luck";
         }
-        try {
-            document.getElementById("statusMessage").innerText = "Connecting wallet...";
-            
-            // ネットワークがCoston2かチェック、違えば自動切り替え請求
-            try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: coston2ChainId }],
-                });
-            } catch (switchError) {
-                // メタマスクにCoston2がない場合はエラーになるので手動追加を促す
-                if (switchError.code === 4902) {
-                    alert("Please add Flare Testnet Coston2 to your MetaMask first!");
-                    return;
-                }
-            }
 
-            // アカウント取得
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            userAddress = accounts[0];
-            
-            // Ethers.jsのセットアップ
-            provider = new ethers.BrowserProvider(window.ethereum);
-            signer = await provider.getSigner();
-            lottoContract = new ethers.Contract(contractAddress, contractABI, signer);
-
-            // 画面表示の更新
-            document.getElementById("walletAddress").innerText = `Connected: ${userAddress.substring(0,6)}...${userAddress.substring(38)}`;
-            document.getElementById("connectButton").style.display = "none";
-            document.getElementById("lottoButton").style.display = "block";
-            document.getElementById("statusMessage").innerText = "";
-
-        } catch (error) {
-            console.error(error);
-            document.getElementById("statusMessage").innerText = "Wallet connection failed.";
-        }
+        showFinalResult(tier);
     }
 
-    // 🎰 2. ロト（スマートコントラクト）を実行する関数
-    async function playLotto() {
-        if (!lottoContract) return;
-
-        try {
-            // ボタンをロックして二重クリックを防止
-            document.getElementById("lottoButton").disabled = true;
-            document.getElementById("statusMessage").innerText = "⚡ Demanding Transaction... Please confirm in MetaMask.";
-            document.getElementById("resultBox").style.display = "none";
-
-            // スマートコントラクトの openChest 関数を実行（社長のアドレスに結果を送る指定）
-            const tx = await lottoContract.openChest(userAddress);
-            
-            document.getElementById("statusMessage").innerText = "⏳ Waiting for Block Confirmation (Mining)...";
-            
-            // ブロックチェーンに書き込まれる（承認される）のを待機
-            const receipt = await tx.wait();
-            
-            document.getElementById("statusMessage").innerText = "🎉 Transaction Confirmed! Reading Oracle Result...";
-
-            // コントラクトが放出したログ（Event）から「当たった等賞（tier）」を特定する
-            let finalTier = "No Luck";
-            for (const log of receipt.logs) {
-                try {
-                    const parsedLog = lottoContract.interface.parseLog(log);
-                    if (parsedLog && parsedLog.name === "LottoPlayed") {
-                        finalTier = parsedLog.args.tier; // コントラクトが計算した本当の等賞
-                        break;
-                    }
-                } catch (e) {
-                    // 他の無関係なログはスキップ
-                }
-            }
-
-            // 🎯 3. 確定した結果に合わせて画面とXシェアを連動させる
-            showFinalResult(finalTier);
-
-        } catch (error) {
-            console.error(error);
-            // 24時間制限のrequireに引っかかった場合のエラー処理
-            if (error.message.includes("You can only play once every 24 hours")) {
-                document.getElementById("statusMessage").innerText = "❌ Clock Locked! You can only play once every 24 hours.";
-            } else {
-                document.getElementById("statusMessage").innerText = "Transaction cancelled or failed.";
-            }
-            document.getElementById("lottoButton").disabled = false;
-        }
-    }
-
-    // 🎯 4. 結果を画面に反映し、Xシェアボタンを設定する関数
     function showFinalResult(tier) {
-        // 等賞ごとのデータマッピング（小文字統一）
         const tierData = {
             "Mythic": { title: "💎 🎉 MYTHIC WIN!", file: "mythic", text: "Hits the Mythic chest in the Daily Lotto and simulated winning 2,000 $GANJA!" },
             "Legendary": { title: "✨ 🔥 LEGENDARY WIN!", file: "legendary", text: "Hits the Legendary chest in the Daily Lotto and simulated winning 500 $GANJA!" },
@@ -229,22 +108,17 @@
             "No Luck": { title: "👀 🎰 No Luck Today", file: "noluck", text: "Played the GanjaFlare Daily Lotto today! Better luck tomorrow!" }
         };
 
-        const result = tierData[tier] || tierData["No Luck"];
+        const result = tierData[tier];
 
-        // 画面の画像とタイトルを更新
         document.getElementById("resultTitle").innerText = result.title;
         document.getElementById("resultImage").src = `./${result.file}.jpg`;
         
-        // 𝕏 (X)のシェアリンクを作成（先ほど作った専用小文字HTMLにリンクさせる！）
+        // 𝕏 (X)のシェアリンク（作った小文字HTMLとバチッと連動）
         const shareUrl = `https://ganjaflare-lotto.vercel.app/${result.file}.html`;
         const postText = `${result.title}\n\n${result.text}\n\n▼ Play Here:\n`;
         
         document.getElementById("shareXButton").href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postText)}&url=${encodeURIComponent(shareUrl)}`;
-
-        // 結果ボックスを表示してボタンを元に戻す
-        document.getElementById("statusMessage").innerText = "🎰 Draw Complete!";
         document.getElementById("resultBox").style.display = "block";
-        document.getElementById("lottoButton").disabled = false;
     }
 </script>
 

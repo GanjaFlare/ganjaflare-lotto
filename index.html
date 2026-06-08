@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GanjaFlare Daily Lotto 🎰</title>
     <style>
-        /* 社長が元々設定されていた背景色やデザインの雰囲気に戻しています */
+        /* 社長が元々作られていた通りのシンプルなダークデザイン */
         body {
-            background-color: #0b141a; /* 元の落ち着いたダークカラー */
+            background-color: #0b141a;
             color: #ffffff;
             font-family: 'Helvetica Neue', Arial, sans-serif;
             text-align: center;
@@ -22,8 +22,9 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         h1 { color: #fff; margin-bottom: 20px; }
+        p { color: #bbb; }
         
-        /* 元のアドレス入力欄 */
+        /* 元のアドレス入力ボックス */
         .address-input {
             width: 80%;
             padding: 12px;
@@ -113,7 +114,7 @@
             return;
         }
 
-        // 画面をすっきりさせて動画演出を開始
+        // スタートボタンを隠してmp4動画を再生する元のフロー
         document.getElementById("startButton").style.display = "none";
         document.getElementById("resultBox").style.display = "none";
         const videoContainer = document.getElementById("videoContainer");
@@ -123,12 +124,12 @@
         video.currentTime = 0;
         video.play();
 
-        // 🎥 動画が再生終了（終わったら結果を出す元のフロー）
+        // 動画終了時の処理
         video.onended = function() {
             videoContainer.style.display = "none";
             document.getElementById("startButton").style.display = "inline-block";
             
-            // 確率計算を実行
+            // 確率を計算
             determineResult();
         };
     }
@@ -155,7 +156,6 @@
     }
 
     function showFinalResult(tier) {
-        // 等賞ごとのデータ設定
         const tierData = {
             "Mythic": { title: "💎 🎉 MYTHIC WIN!", file: "mythic", text: "Hits the Mythic chest in the Daily Lotto and simulated winning 2,000 $GANJA!" },
             "Legendary": { title: "✨ 🔥 LEGENDARY WIN!", file: "legendary", text: "Hits the Legendary chest in the Daily Lotto and simulated winning 500 $GANJA!" },
@@ -167,17 +167,4 @@
 
         const result = tierData[tier];
 
-        document.getElementById("resultTitle").innerText = result.title;
-        document.getElementById("resultImage").src = `./${result.file}.jpg`;
-        
-        // 𝕏 (X)のシェアリンク（先ほど作成した専用小文字HTMLへの動的リンク）
-        const shareUrl = `https://ganjaflare-lotto.vercel.app/${result.file}.html`;
-        const postText = `${result.title}\n\n${result.text}\n\n▼ Play Here:\n`;
-        
-        document.getElementById("shareXButton").href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postText)}&url=${encodeURIComponent(shareUrl)}`;
-        document.getElementById("resultBox").style.display = "block";
-    }
-</script>
-
-</body>
-</html>
+        document.getElementById("resultTitle").innerText

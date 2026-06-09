@@ -1,0 +1,12 @@
+{
+  "name": "ganjaflare-lotto",
+  "version": "1.0.0",
+  "description": "GanjaFlare Daily Lotto backend",
+  "main": "api/lotto.js",
+  "scripts": {
+    "start": "node api/lotto.js"
+  },
+  "dependencies": {
+    "ethers": "^6.11.1"
+  }
+}

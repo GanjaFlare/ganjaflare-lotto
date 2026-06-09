@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GanjaFlare Daily Lotto</title>
 
-    <meta property="og:url" content="https://ganjaflare-lotto.vercel.app/">
+    <meta property="og:url" content="https://ganjaflare-lotto.onrender.com/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="GanjaFlare Daily Lotto 🎰">
     <meta property="og:description" content="Open the lucky chest daily at 12:00 UTC and win up to 2,000 $GANJA!">
-    <meta property="og:image" content="https://ganjaflare-lotto.vercel.app/ogp-image.jpg">
+    <meta property="og:image" content="https://ganjaflare-lotto.onrender.com/ogp-image.jpg">
     
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="GanjaFlare Daily Lotto 🎰">
     <meta name="twitter:description" content="Open the lucky chest daily at 12:00 UTC and win up to 2,000 $GANJA!">
-    <meta name="twitter:image" content="https://ganjaflare-lotto.vercel.app/ogp-image.jpg">
+    <meta name="twitter:image" content="https://ganjaflare-lotto.onrender.com/ogp-image.jpg">
 
     <style>
         * {
@@ -228,22 +228,49 @@
     </div>
 </div>
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
     let userLoggedInEmail = "";
     let lastLottoTier = "";
     let lastLottoAmount = 0;
-    let shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app"; 
+    let shareUrlForThisResult = "https://ganjaflare-lotto.onrender.com"; 
 
+    // 🔒 暗号化されてGoogleから送られてきたユーザー情報を安全に解析する関数
+    function parseJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('0' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    }
+
+    // 🌐 Googleログイン認証が成功したときに自動実行される関数
+    function handleCredentialResponse(response) {
+        try {
+            const responsePayload = parseJwt(response.credential);
+            userLoggedInEmail = responsePayload.email; // 本物のメールアドレスをセット！
+            
+            document.getElementById('userEmail').innerText = userLoggedInEmail;
+            document.getElementById('login-area').style.display = 'none';
+            document.getElementById('game-form').style.display = 'block';
+
+            const video = document.getElementById('chestVideo');
+            video.load();
+            video.currentTime = 0;
+        } catch (err) {
+            console.error("Google Auth Parse Error:", err);
+            alert("Failed to sign in with Google.");
+        }
+    }
+
+    // 🔘 ログインボタンを押したときに公式ポップアップを呼び出す関数
     function loginWithGoogle() {
-        // テスト・開発用の仮ログイン処理
-        userLoggedInEmail = "ceo_test@gmail.com"; 
-        document.getElementById('userEmail').innerText = userLoggedInEmail;
-        document.getElementById('login-area').style.display = 'none';
-        document.getElementById('game-form').style.display = 'block';
-
-        const video = document.getElementById('chestVideo');
-        video.load();
-        video.currentTime = 0;
+        google.accounts.id.initialize({
+            client_id: "53876794554-8tdrpeeopmkmmv8tuicav3gev3724fd8.apps.googleusercontent.com", // 👈 社長がさっき発行した本番用ID！
+            callback: handleCredentialResponse
+        });
+        google.accounts.id.prompt(); // ポップアップを強制起動！
     }
 
     async function startLotto() {
@@ -291,7 +318,7 @@
                 const imgTag = document.getElementById('resultImgTag');
                 imgBox.style.display = 'block';
                 
-                shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app"; 
+                shareUrlForThisResult = "https://ganjaflare-lotto.onrender.com"; 
 
                 // サーバーから返ってきたリアルな結果（tier と amount）を元に画面を切り替え
                 const tier = result.tier;

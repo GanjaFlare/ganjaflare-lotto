@@ -11,25 +11,29 @@ const RPC_URL = "https://flare-api.flare.network/ext/C/rpc";
 const TOKEN_ADDRESS = "0x9aa42de5ec6f3b3bbf252bf8ac81acb338d888b7";
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
-// 簡易ABI（transfer関数のみ）
 const ABI = ["function transfer(address to, uint256 amount) public returns (bool)"];
-
 const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const contract = new ethers.Contract(TOKEN_ADDRESS, ABI, wallet);
 
-// プレイ履歴メモリ（サーバー再起動でリセットされます）
+// プレイ履歴メモリ
 const playedAccounts = new Map();
 
 app.post('/', async (req, res) => {
     const { walletAddress, email } = req.body;
 
-    // 1. 24時間制限チェック
-    const now = Date.now();
+    // 1. UTC 12:00 リセットロジック
+    const now = new Date();
+    const lastReset = new Date(now);
+    lastReset.setUTCHours(12, 0, 0, 0);
+    if (now.getUTCHours() < 12) {
+        lastReset.setUTCDate(lastReset.getUTCDate() - 1);
+    }
+
     if (playedAccounts.has(email)) {
-        const lastPlayed = playedAccounts.get(email);
-        if (now - lastPlayed < 24 * 60 * 60 * 1000) {
-            return res.status(403).json({ error: "You can only play once every 24 hours." });
+        const lastPlayed = new Date(playedAccounts.get(email));
+        if (lastPlayed >= lastReset) {
+            return res.status(403).json({ error: "You've already played today! Resets at 12:00 UTC." });
         }
     }
 
@@ -43,12 +47,8 @@ app.post('/', async (req, res) => {
     else if (rand < 0.40) { tier = "Rare"; amount = 30; }
 
     try {
-        // 3. 即時送金実行
         const tx = await contract.transfer(walletAddress, ethers.utils.parseUnits(amount.toString(), 18));
-        
-        // 4. 完了記録
-        playedAccounts.set(email, now);
-        
+        playedAccounts.set(email, now.getTime()); // 完了記録
         res.json({ tier, amount, txHash: tx.hash });
     } catch (error) {
         console.error("Transfer Error:", error);

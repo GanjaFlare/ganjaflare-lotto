@@ -278,10 +278,10 @@
 
             let result = await response.json();
 
-            // 🛠️ 【開発者救済システム】もし24時間制限エラーになっても、テスト用に強制的に「Common」として画面を進めます！
             if (!response.ok) {
-                console.log("Server limitation active. Triggering Test-Mode for UI verification.");
-                result = { tier: "Common", amount: 10 }; 
+    alert(result.error || "Failed to play lotto");
+    resetGame();
+    return;
             }
 
             const video = document.getElementById('chestVideo');

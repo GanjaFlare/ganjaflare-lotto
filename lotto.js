@@ -1,5 +1,9 @@
-// api/lotto.js
+// lotto.js
 const { ethers } = require("ethers");
+const express = require("express"); // 👈 常時待ち受け用のツールを追加
+
+const app = express();
+app.use(express.json()); // JSONデータを読み込めるようにする設定
 
 // 📌 デプロイしたロトコントラクトの最小限のABI設定
 const LOTTO_ABI = [
@@ -10,26 +14,23 @@ const LOTTO_ABI = [
 const COSTON2_RPC_URL = "https://coston2-api.flare.network/ext/bc/C/rpc";
 const LOTTO_CONTRACT_ADDRESS = "0xc40A288E75CdBdb30a84dFBA25D89F438B023DDE";
 
-// 💡 簡易的な1日1回制限用のインメモリキャッシュ（Vercelのインスタンス再起動でリセットされますが、テスト用としては十分機能します）
-// ※本番環境で厳密に管理する場合は、SupabaseやFirebase、Upstash Redisなどの軽量DBとの連携を推奨します。
+// 💡 簡易的な1日1回制限用のインメモリキャッシュ
 const playedUsersCache = {}; 
 
-module.exports = async (req, res) => {
-    // CORS（クロスドメイン）対策の設定
+// CORS（クロスドメイン）対策の共通設定
+app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-
     if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+        return res.status(200).end();
     }
+    next();
+});
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: "Method not allowed" });
-    }
-
+// 🎰 ロトのメイン処理
+app.post("/", async (req, res) => {
     try {
         const { walletAddress, email, googleToken } = req.body;
 
@@ -69,29 +70,24 @@ module.exports = async (req, res) => {
 
         // 4. 当選した場合のみ、ブロックチェーン上で自動送金を実行
         if (amount > 0) {
-            // Vercelの環境変数から「Lotto賞金用ウォレット」の秘密鍵を安全に読み込み
             const privateKey = process.env.LOTTO_RELAYER_PRIVATE_KEY;
             if (!privateKey) {
                 return res.status(500).json({ error: "Relayer private key not configured on server" });
             }
 
-            // Web3プロバイダーとウォレット（署名者）の初期化
             const provider = new ethers.JsonRpcProvider(COSTON2_RPC_URL);
             const wallet = new ethers.Wallet(privateKey, provider);
             const lottoContract = new ethers.Contract(LOTTO_CONTRACT_ADDRESS, LOTTO_ABI, wallet);
 
-            // トークンの桁数（18桁のwei単位）に変換（例: 10枚 -> 10000000000000000000）
             const tokenAmountWei = ethers.parseUnits(amount.toString(), 18);
 
-            // 👑 コントラクトの payoutReward 関数を、賞金用ウォレットがガス代を払って実行！
             const tx = await lottoContract.payoutReward(walletAddress, tier, tokenAmountWei);
-            await tx.wait(); // トランザクションがブロックに承認されるまで待機
+            await tx.wait();
         }
 
         // 5. プレイ履歴をキャッシュに記録（24時間ロック）
         playedUsersCache[email] = now;
 
-        // フロントエンドに結果を安全に返す
         return res.status(200).json({
             success: true,
             tier: tier,
@@ -102,4 +98,10 @@ module.exports = async (req, res) => {
         console.error("Lotto Error:", error);
         return res.status(500).json({ error: "Internal server error", details: error.message });
     }
-};
+});
+
+// 🔌 Renderが指定するポート（または3000番）でサーバーを24時間起動させ続ける
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Lotto server is running on port ${PORT}`);
+});

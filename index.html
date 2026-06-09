@@ -17,9 +17,7 @@
     <meta name="twitter:image" content="https://ganjaflare-lotto.vercel.app/ogp-image.jpg">
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             background-color: #f5f7fb;
             color: #1a1d20;
@@ -118,9 +116,7 @@
             transition: transform 0.2s, opacity 0.2s;
             -webkit-tap-highlight-color: transparent;
         }
-        .btn-open:active {
-            transform: scale(0.98);
-        }
+        .btn-open:active { transform: scale(0.98); }
         .btn-share-x {
             background: #000000;
             color: white;
@@ -149,9 +145,7 @@
             display: none;
             margin-top: 20px;
         }
-        #game-form {
-            display: none;
-        }
+        #game-form { display: none; }
         @media (max-width: 480px) {
             body { padding: 5px; }
             .container {
@@ -230,7 +224,7 @@
     let userLoggedInEmail = "";
     let lastLottoTier = "";
     let lastLottoAmount = 0;
-    // 🔗 シェア時のURLは実体が存在するVercelのメインURLに固定してOGP画像を表示させます
+    // 🔄 動的に結果用HTMLのURLへ切り替えるためのベース
     let shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app"; 
 
     function parseJwt(token) {
@@ -305,24 +299,31 @@
                 const amount = result.amount;
                 let amountText = "";
 
+                // 🎯 各結果に合わせて「シェアする専用ページ（HTML）」のURLを確定させます
                 if (tier === "Mythic") {
                     amountText = "🎉 You won 2,000 $GANJA! 🎉";
                     imgTag.src = "mythic.jpg";
+                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/mythic.html";
                 } else if (tier === "Legendary") {
                     amountText = "🔥 You won 500 $GANJA! 🔥";
                     imgTag.src = "legendary.jpg";
+                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/legendary.html";
                 } else if (tier === "Epic") {
                     amountText = "✨ You won 100 $GANJA! ✨";
                     imgTag.src = "epic.jpg";
+                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/epic.html";
                 } else if (tier === "Rare") {
                     amountText = "You won 30 $GANJA!";
                     imgTag.src = "rare.jpg";
+                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/rare.html";
                 } else if (tier === "Common") {
                     amountText = "You won 10 $GANJA!";
                     imgTag.src = "common.jpg";
+                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/common.html";
                 } else {
                     amountText = "Better luck tomorrow!";
                     imgTag.src = "noluck.jpg";
+                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/noluck.html";
                 }
                 
                 lastLottoTier = tier;
@@ -341,9 +342,7 @@
         const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
         const messageText = `🎰 Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' || lastLottoAmount === 0 ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}`;
 
-        // 🔗 確実に存在するメインURLを紐付けてタイムラインに流します
         const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(messageText)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
-        
         window.open(xUrl, '_blank'); 
     }
 

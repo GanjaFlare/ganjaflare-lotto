@@ -261,7 +261,7 @@
 
         try {
             // 🚀 サーバー側の安全な抽選・送金API（api/lotto.js）を呼び出し！
-            const response = await fetch('/api/lotto', {
+            const response = await fetch('https://ganjaflare-lotto.onrender.com', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

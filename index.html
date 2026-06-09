@@ -267,8 +267,8 @@
         document.getElementById('openBtn').innerText = "ROLLING...";
 
         try {
-            const response = await fetch('https://ganjaflare-lotto.onrender.com', {
-                method: 'POST',
+            const response = await fetch('https://ganjaflare-lotto-backend.vercel.app', { // 👈 以前動いていたVercelのサーバーURL（※もし別のURLであればそのテスト用URL）
+    method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     walletAddress: address,

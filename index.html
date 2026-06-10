@@ -29,6 +29,11 @@
             margin: 0;
             padding: 10px;
         }
+        /* 追加：ローディング用スタイル */
+        #loadingOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;
+        }
         .container {
             background: #ffffff;
             border: 1px solid #e1e4e8;
@@ -39,149 +44,36 @@
             text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
-        h1 {
-            font-size: 22px;
-            margin-top: 5px;
-            margin-bottom: 25px;
-            color: #2e7d32;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        label {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 8px;
-            color: #636e72;
-            font-weight: 500;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #dcdde1;
-            background-color: #fafbfc;
-            color: #1a1d20;
-            font-size: 15px;
-            transition: border-color 0.2s;
-            -webkit-appearance: none;
-        }
-        input:focus {
-            outline: none;
-            border-color: #2e7d32;
-            background-color: #ffffff;
-        }
-        .chest-box {
-            width: 100%;
-            max-width: 320px;
-            aspect-ratio: 1 / 1;
-            margin: 0 auto 20px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        .result-image-box {
-            width: 100%;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            display: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        #resultImgTag {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        .btn-open {
-            background: linear-gradient(135deg, #2e7d32, #1b5e20);
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(46,125,50,0.2);
-            transition: transform 0.2s, opacity 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
+        h1 { font-size: 22px; margin-top: 5px; margin-bottom: 25px; color: #2e7d32; font-weight: 700; letter-spacing: -0.5px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-size: 13px; margin-bottom: 8px; color: #636e72; font-weight: 500; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #dcdde1; background-color: #fafbfc; color: #1a1d20; font-size: 15px; }
+        input:focus { outline: none; border-color: #2e7d32; background-color: #ffffff; }
+        .chest-box { width: 100%; max-width: 320px; aspect-ratio: 1 / 1; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        .result-image-box { width: 100%; margin-bottom: 20px; border-radius: 10px; overflow: hidden; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #resultImgTag { width: 100%; height: auto; display: block; }
+        .btn-open { background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; border: none; padding: 14px 20px; font-size: 16px; font-weight: bold; border-radius: 30px; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(46,125,50,0.2); }
         .btn-open:active { transform: scale(0.98); }
-        .btn-share-x {
-            background: #000000;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .countdown-timer {
-            margin-top: 10px;
-            font-size: 13px;
-            color: #c0392b;
-            font-weight: bold;
-        }
-        .result-screen {
-            display: none;
-            margin-top: 20px;
-        }
+        .btn-share-x { background: #000000; color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: bold; border-radius: 30px; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .result-screen { display: none; margin-top: 20px; }
         #game-form { display: none; }
-        @media (max-width: 480px) {
-            body { padding: 5px; }
-            .container {
-                padding: 20px 15px;
-                border-radius: 15px;
-                border: none;
-                box-shadow: none;
-            }
-            h1 { font-size: 20px; }
-        }
+        @media (max-width: 480px) { body { padding: 5px; } .container { padding: 20px 15px; border-radius: 15px; border: none; box-shadow: none; } }
     </style>
 </head>
 <body>
+
+<div id="loadingOverlay">
+    <img src="niku.gif" style="width: 150px; height: 150px;">
+</div>
 
 <div class="container">
     <h1>GanjaFlare Daily Lotto</h1>
     
     <div id="login-area">
         <p style="color: #636e72; margin-bottom: 25px; font-size: 14px; line-height: 1.4;">Please sign in with Google to play the daily lotto.</p>
-        
-        <div id="g_id_onload"
-             data-client_id="53876794554-8tdrpeeopmkmmv8tuicav3gev3724fd8.apps.googleusercontent.com"
-             data-context="signin"
-             data-ux_mode="popup"
-             data-callback="handleCredentialResponse"
-             data-auto_prompt="false">
-        </div>
-        <div class="g_id_signin"
-             data-type="standard"
-             data-shape="pill"
-             data-theme="outline"
-             data-text="signin_with"
-             data-size="large"
-             data-logo_alignment="left"
-             style="display: flex; justify-content: center;">
-        </div>
+        <div id="g_id_onload" data-client_id="53876794554-8tdrpeeopmkmmv8tuicav3gev3724fd8.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
+        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left" style="display: flex; justify-content: center;"></div>
     </div>
     
     <div id="game-form">
@@ -199,8 +91,6 @@
         <div style="margin-top: 25px; margin-bottom: 5px; font-size: 13px; color: #2e7d32; font-weight: bold; word-break: break-all;">
             Logged in as: <span id="userEmail">---</span>
         </div>
-
-        <div class="countdown-timer" id="countdownTimer">You can play once daily. Resets at 12:00 UTC!</div>
     </div>
 
     <div class="result-screen" id="resultScreen">
@@ -229,111 +119,60 @@
     function parseJwt(token) {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-            return '%' + ('0' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('0' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
         return JSON.parse(jsonPayload);
     }
 
     function handleCredentialResponse(response) {
-        try {
-            const responsePayload = parseJwt(response.credential);
-            userLoggedInEmail = responsePayload.email;
-            
-            document.getElementById('userEmail').innerText = userLoggedInEmail;
-            document.getElementById('login-area').style.display = 'none';
-            document.getElementById('game-form').style.display = 'block';
-
-            const video = document.getElementById('chestVideo');
-            video.load();
-            video.currentTime = 0;
-        } catch (err) {
-            console.error("Google Auth Parse Error:", err);
-            alert("Failed to sign in with Google.");
-        }
+        const payload = parseJwt(response.credential);
+        userLoggedInEmail = payload.email;
+        document.getElementById('userEmail').innerText = userLoggedInEmail;
+        document.getElementById('login-area').style.display = 'none';
+        document.getElementById('game-form').style.display = 'block';
     }
 
     async function startLotto() {
         const address = document.getElementById('walletAddress').value;
+        if (!address) { alert('Please enter your wallet address!'); return; }
 
-        if (!address) {
-            alert('Please enter your wallet address!');
-            return;
-        }
-
-        document.getElementById('openBtn').disabled = true;
-        document.getElementById('walletAddress').disabled = true;
-        document.getElementById('openBtn').innerText = "ROLLING...";
+        // ローディング開始
+        document.getElementById('loadingOverlay').style.display = 'flex';
 
         try {
-            // 🌐 正しい本番のRenderサーバーを呼び出します
             const response = await fetch('https://ganjaflare-lotto-backend.onrender.com', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    walletAddress: address,
-                    email: userLoggedInEmail
-                })
+                body: JSON.stringify({ walletAddress: address, email: userLoggedInEmail })
             });
 
-            let result = await response.json();
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || "Failed to play lotto");
 
-            if (!response.ok) {
-    alert(result.error || "Failed to play lotto");
-    resetGame();
-    return;
-            }
-
+            // ローディング終了 → 動画再生
+            document.getElementById('loadingOverlay').style.display = 'none';
             const video = document.getElementById('chestVideo');
             video.play();
 
             video.onended = () => {
                 document.getElementById('game-form').style.display = 'none';
                 document.getElementById('resultScreen').style.display = 'block';
-
                 const imgBox = document.getElementById('resultImageBox');
                 const imgTag = document.getElementById('resultImgTag');
                 imgBox.style.display = 'block';
 
-                const tier = result.tier;
-                const amount = result.amount;
-                let amountText = "";
-
-                // 🎯 確実に各結果の専用HTMLのURLに切り替えます
-                if (tier === "Mythic") {
-                    amountText = "🎉 You won 2,000 $GANJA! 🎉";
-                    imgTag.src = "mythic.jpg";
-                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/mythic.html";
-                } else if (tier === "Legendary") {
-                    amountText = "🔥 You won 500 $GANJA! 🔥";
-                    imgTag.src = "legendary.jpg";
-                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/legendary.html";
-                } else if (tier === "Epic") {
-                    amountText = "✨ You won 100 $GANJA! ✨";
-                    imgTag.src = "epic.jpg";
-                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/epic.html";
-                } else if (tier === "Rare") {
-                    amountText = "You won 30 $GANJA!";
-                    imgTag.src = "rare.jpg";
-                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/rare.html";
-                } else if (tier === "Common") {
-                    amountText = "You won 10 $GANJA!";
-                    imgTag.src = "common.jpg";
-                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/common.html";
-                } else {
-                    amountText = "Better luck tomorrow!";
-                    imgTag.src = "noluck.jpg";
-                    shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/noluck.html";
-                }
+                const tiers = { "Mythic": "mythic.jpg", "Legendary": "legendary.jpg", "Epic": "epic.jpg", "Rare": "rare.jpg", "Common": "common.jpg" };
+                imgTag.src = tiers[result.tier] || "common.jpg";
                 
-                lastLottoTier = tier;
-                lastLottoAmount = amount;
-                document.getElementById('resultAmount').innerText = amountText;
+                const labels = { "Mythic": "🎉 You won 2,000 $GANJA! 🎉", "Legendary": "🔥 You won 500 $GANJA! 🔥", "Epic": "✨ You won 100 $GANJA! ✨", "Rare": "You won 30 $GANJA!", "Common": "You won 10 $GANJA!" };
+                document.getElementById('resultAmount').innerText = labels[result.tier] || "Better luck tomorrow!";
+                
+                lastLottoTier = result.tier;
+                lastLottoAmount = result.amount;
+                shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/" + (result.tier.toLowerCase()) + ".html";
             };
-
         } catch (error) {
-            console.error("Lotto Fetch Error:", error);
-            alert("Connection error. Please try again.");
+            document.getElementById('loadingOverlay').style.display = 'none';
+            alert(error.message);
             resetGame();
         }
     }
@@ -341,7 +180,6 @@
     function shareOnX() {
         const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
         const messageText = `🎰 Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' || lastLottoAmount === 0 ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}`;
-
         const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(messageText)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
         window.open(xUrl, '_blank'); 
     }
@@ -349,21 +187,10 @@
     function resetGame() {
         document.getElementById('game-form').style.display = 'block';
         document.getElementById('resultScreen').style.display = 'none';
-        
-        const openBtn = document.getElementById('openBtn');
-        const walletInput = document.getElementById('walletAddress');
-        openBtn.disabled = false;
-        openBtn.innerText = "OPEN CHEST";
-        walletInput.disabled = false;
-        
+        document.getElementById('loadingOverlay').style.display = 'none';
         const video = document.getElementById('chestVideo');
-        video.currentTime = 0;
-        video.pause();
-
-        document.getElementById('resultImageBox').style.display = 'none';
-        document.getElementById('resultImgTag').src = "";
+        video.currentTime = 0; video.pause();
     }
 </script>
-
 </body>
 </html>

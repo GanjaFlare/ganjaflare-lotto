@@ -1,6 +1,8 @@
 const express = require('express');
 const { ethers } = require('ethers');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 const app = express();
 
 app.use(cors());
@@ -16,8 +18,28 @@ const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const contract = new ethers.Contract(TOKEN_ADDRESS, ABI, wallet);
 
-// プレイ履歴メモリ
-const playedAccounts = new Map();
+// プレイ履歴の保存ファイルパス
+const historyFile = path.join(__dirname, 'history.json');
+
+// サーバー起動時に履歴を読み込む
+let playedAccounts = new Map();
+if (fs.existsSync(historyFile)) {
+    try {
+        const data = fs.readFileSync(historyFile, 'utf8');
+        playedAccounts = new Map(JSON.parse(data));
+    } catch (e) {
+        console.error("Failed to load history:", e);
+    }
+}
+
+// 履歴を保存する関数
+function saveHistory() {
+    try {
+        fs.writeFileSync(historyFile, JSON.stringify([...playedAccounts]));
+    } catch (e) {
+        console.error("Failed to save history:", e);
+    }
+}
 
 app.post('/', async (req, res) => {
     const { walletAddress, email } = req.body;
@@ -48,7 +70,11 @@ app.post('/', async (req, res) => {
 
     try {
         const tx = await contract.transfer(walletAddress, ethers.utils.parseUnits(amount.toString(), 18));
-        playedAccounts.set(email, now.getTime()); // 完了記録
+        
+        // プレイ記録を更新して保存
+        playedAccounts.set(email, now.getTime());
+        saveHistory();
+        
         res.json({ tier, amount, txHash: tx.hash });
     } catch (error) {
         console.error("Transfer Error:", error);

@@ -29,7 +29,6 @@
             margin: 0;
             padding: 10px;
         }
-        /* 追加：ローディング用スタイル */
         #loadingOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;
@@ -135,7 +134,6 @@
         const address = document.getElementById('walletAddress').value;
         if (!address) { alert('Please enter your wallet address!'); return; }
 
-        // ローディング開始
         document.getElementById('loadingOverlay').style.display = 'flex';
 
         try {
@@ -148,7 +146,6 @@
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || "Failed to play lotto");
 
-            // ローディング終了 → 動画再生
             document.getElementById('loadingOverlay').style.display = 'none';
             const video = document.getElementById('chestVideo');
             video.play();
@@ -160,15 +157,25 @@
                 const imgTag = document.getElementById('resultImgTag');
                 imgBox.style.display = 'block';
 
-                const tiers = { "Mythic": "mythic.jpg", "Legendary": "legendary.jpg", "Epic": "epic.jpg", "Rare": "rare.jpg", "Common": "common.jpg" };
+                const tiers = { "Mythic": "mythic.jpg", "Legendary": "legendary.jpg", "Epic": "epic.jpg", "Rare": "rare.jpg", "Common": "common.jpg", "No Luck": "noluck.jpg" };
                 imgTag.src = tiers[result.tier] || "common.jpg";
                 
-                const labels = { "Mythic": "🎉 You won 2,000 $GANJA! 🎉", "Legendary": "🔥 You won 500 $GANJA! 🔥", "Epic": "✨ You won 100 $GANJA! ✨", "Rare": "You won 30 $GANJA!", "Common": "You won 10 $GANJA!" };
+                const labels = { 
+                    "Mythic": "🎉 You won 2,000 $GANJA! 🎉", 
+                    "Legendary": "🔥 You won 500 $GANJA! 🔥", 
+                    "Epic": "✨ You won 100 $GANJA! ✨", 
+                    "Rare": "You won 30 $GANJA!", 
+                    "Common": "You won 10 $GANJA!",
+                    "No Luck": "Better luck tomorrow!" 
+                };
                 document.getElementById('resultAmount').innerText = labels[result.tier] || "Better luck tomorrow!";
                 
                 lastLottoTier = result.tier;
                 lastLottoAmount = result.amount;
-                shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/" + (result.tier.toLowerCase()) + ".html";
+                
+                // スペースを削除し、正しくURLを生成
+                const tierUrl = result.tier.toLowerCase().replace(" ", "");
+                shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/" + tierUrl + ".html";
             };
         } catch (error) {
             document.getElementById('loadingOverlay').style.display = 'none';

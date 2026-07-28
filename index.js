@@ -57,11 +57,11 @@ app.post('/', async (req, res) => {
         let tier = "No Luck";
         let amount = 0;
 
-        if (rand < 0.005) { tier = "Mythic"; amount = 2000; }
-        else if (rand < 0.035) { tier = "Legendary"; amount = 500; }
-        else if (rand < 0.135) { tier = "Epic"; amount = 100; }
-        else if (rand < 0.335) { tier = "Rare"; amount = 30; }
-        else if (rand < 0.685) { tier = "Common"; amount = 10; }
+        if (rand < 0.001) { tier = "Mythic"; amount = 2000; }          // 0.1%
+        else if (rand < 0.010) { tier = "Legendary"; amount = 500; }  // 0.9% (0.001 + 0.009)
+        else if (rand < 0.050) { tier = "Epic"; amount = 100; }       // 4.0% (0.010 + 0.040)
+        else if (rand < 0.285) { tier = "Rare"; amount = 30; }        // 23.5% (0.050 + 0.235)
+        else if (rand < 0.685) { tier = "Common"; amount = 10; }      // 40.0% (0.285 + 0.400)
 
         if (amount > 0) {
             const tx = await contract.transfer(walletAddress, ethers.utils.parseUnits(amount.toString(), 18));

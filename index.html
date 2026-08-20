@@ -38,9 +38,10 @@
 
         body {
             background-color: var(--bg-color);
-            /* iseki.pngを削除し、深みのあるサイバーグラデーション背景に変更 */
-            background-image: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.25), transparent 70%),
-                              radial-gradient(circle at 80% 80%, rgba(52, 211, 153, 0.15), transparent 50%);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(52, 211, 153, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(10, 15, 30, 1) 100%);
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -149,7 +150,7 @@
             border: 1px dashed rgba(52, 211, 153, 0.2);
         }
 
-        .chest-box img { 
+        video { 
             width: 100%; 
             height: 100%; 
             object-fit: contain; 
@@ -171,7 +172,6 @@
             display: block; 
         }
 
-        /* エメラルド×パープル ネオングラデーションボタン */
         .btn-open { 
             background: linear-gradient(135deg, var(--emerald) 0%, #10b981 50%, var(--purple) 100%); 
             color: #0f172a; 
@@ -232,7 +232,6 @@
             display: none; 
         }
 
-        /* ログインテキスト・ユーザー情報 */
         #login-area p {
             color: var(--text-sub) !important;
         }
@@ -250,7 +249,6 @@
             text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
         }
 
-        /* 戻りリンクのスタイリング */
         .return-link {
             color: var(--emerald) !important; 
             text-decoration: none; 
@@ -287,7 +285,6 @@
         <div id="g_id_onload" data-client_id="53876794554-8tdrpeeopmkmmv8tuicav3gev3724fd8.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
         <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black" data-text="signin_with" data-size="large" data-logo_alignment="left" style="display: flex; justify-content: center;"></div>
         
-        <!-- 公式サイトへの戻りリンク -->
         <div style="margin-top: 30px; border-top: 1px dashed var(--border-glow); padding-top: 20px; text-align: center;">
             <a href="https://sites.google.com/view/ganjaflareen/home?authuser=0" class="return-link">
                ✨ Return to GanjaFlare Official Website
@@ -302,7 +299,7 @@
         </div>
         
         <div class="chest-box">
-            <img id="chestGif" src="chest0820.gif" alt="Chest Animation">
+            <video id="chestVideo" src="chest0820.mp4" playsinline muted></video>
         </div>
 
         <button class="btn-open" id="openBtn" onclick="startLotto()">OPEN CHEST</button>
@@ -367,13 +364,10 @@
             if (!response.ok) throw new Error(result.error || "Failed to play lotto");
 
             document.getElementById('loadingOverlay').style.display = 'none';
-            
-            // GIFを再読み込みしてアニメーションを最初から再生させる
-            const gifImg = document.getElementById('chestGif');
-            gifImg.src = 'chest0820.gif?' + new Date().getTime();
+            const video = document.getElementById('chestVideo');
+            video.play();
 
-            // GIF再生アニメーションの表示時間（2.5秒）を置いてから結果画面へ遷移
-            setTimeout(() => {
+            video.onended = () => {
                 document.getElementById('game-form').style.display = 'none';
                 document.getElementById('resultScreen').style.display = 'block';
                 const imgBox = document.getElementById('resultImageBox');
@@ -398,8 +392,7 @@
                 
                 const tierUrl = result.tier.toLowerCase().replace(" ", "");
                 shareUrlForThisResult = "https://ganjaflare-lotto.vercel.app/" + tierUrl + ".html";
-            }, 2500);
-
+            };
         } catch (error) {
             document.getElementById('loadingOverlay').style.display = 'none';
             alert(error.message);
@@ -418,6 +411,8 @@
         document.getElementById('game-form').style.display = 'block';
         document.getElementById('resultScreen').style.display = 'none';
         document.getElementById('loadingOverlay').style.display = 'none';
+        const video = document.getElementById('chestVideo');
+        video.currentTime = 0; video.pause();
     }
 </script>
 </body>

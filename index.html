@@ -16,52 +16,259 @@
     <meta name="twitter:description" content="Open the lucky chest daily at 12:00 UTC and win up to 2,000 $GANJA!">
     <meta name="twitter:image" content="https://ganjaflare-lotto.vercel.app/ogp-image.jpg">
 
+    <!-- Google Font: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(15, 23, 42, 0.65);
+            --border-glow: rgba(52, 211, 153, 0.3);
+            --border-glow-focus: rgba(52, 211, 153, 0.8);
+            --emerald: #34d399;
+            --purple: #a855f7;
+            --pink: #ff007f;
+            --text-main: #f8fafc;
+            --text-sub: #cbd5e1;
+        }
+
         * { box-sizing: border-box; }
+
         body {
-            background-image: url('iseki.png');
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.15), transparent 70%), url('iseki.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            background-attachment: fixed; /* スクロールしても背景を固定 */
-            color: #1a1d20;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 10px;
+            padding: 15px;
         }
+
         #loadingOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(15, 23, 42, 0.85); 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999; 
+            justify-content: center; 
+            align-items: center;
         }
+
         .container {
-            background: #ffffff;
-            border: 1px solid #e1e4e8;
-            border-radius: 20px;
-            padding: 30px 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            padding: 35px 25px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 0 30px rgba(52, 211, 153, 0.1), 0 20px 40px rgba(0, 0, 0, 0.5);
         }
-        h1 { font-size: 22px; margin-top: 5px; margin-bottom: 25px; color: #2e7d32; font-weight: 700; letter-spacing: -0.5px; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; font-size: 13px; margin-bottom: 8px; color: #636e72; font-weight: 500; }
-        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #dcdde1; background-color: #fafbfc; color: #1a1d20; font-size: 15px; }
-        input:focus { outline: none; border-color: #2e7d32; background-color: #ffffff; }
-        .chest-box { width: 100%; max-width: 320px; aspect-ratio: 1 / 1; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        video { width: 100%; height: 100%; object-fit: contain; }
-        .result-image-box { width: 100%; margin-bottom: 20px; border-radius: 10px; overflow: hidden; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        #resultImgTag { width: 100%; height: auto; display: block; }
-        .btn-open { background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; border: none; padding: 14px 20px; font-size: 16px; font-weight: bold; border-radius: 30px; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(46,125,50,0.2); }
-        .btn-open:active { transform: scale(0.98); }
-        .btn-share-x { background: #000000; color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: bold; border-radius: 30px; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px; }
-        .result-screen { display: none; margin-top: 20px; }
-        #game-form { display: none; }
-        @media (max-width: 480px) { body { padding: 5px; } .container { padding: 20px 15px; border-radius: 15px; border: none; box-shadow: none; } }
+
+        h1 { 
+            font-size: 24px; 
+            margin-top: 0; 
+            margin-bottom: 25px; 
+            color: var(--text-main); 
+            font-weight: 800; 
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--emerald) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+        }
+
+        .input-group { 
+            margin-bottom: 20px; 
+            text-align: left; 
+        }
+
+        label { 
+            display: block; 
+            font-size: 13px; 
+            margin-bottom: 8px; 
+            color: var(--text-sub); 
+            font-weight: 600; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border-glow); 
+            background-color: rgba(15, 23, 42, 0.8); 
+            color: var(--text-main); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 15px; 
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        input::placeholder {
+            color: #64748b;
+        }
+
+        input:focus { 
+            outline: none; 
+            border-color: var(--emerald); 
+            background-color: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .chest-box { 
+            width: 100%; 
+            max-width: 320px; 
+            aspect-ratio: 1 / 1; 
+            margin: 0 auto 25px auto; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden; 
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px dashed rgba(52, 211, 153, 0.2);
+        }
+
+        video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+        }
+
+        .result-image-box { 
+            width: 100%; 
+            margin-bottom: 20px; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            display: none; 
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); 
+        }
+
+        #resultImgTag { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+        }
+
+        /* エメラルド×パープル ネオングラデーションボタン */
+        .btn-open { 
+            background: linear-gradient(135deg, var(--emerald) 0%, #10b981 50%, var(--purple) 100%); 
+            color: #0f172a; 
+            border: none; 
+            padding: 16px 24px; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 16px; 
+            font-weight: 800; 
+            letter-spacing: 0.5px;
+            border-radius: 30px; 
+            cursor: pointer; 
+            width: 100%; 
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); 
+            transition: all 0.3s ease;
+        }
+
+        .btn-open:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(52, 211, 153, 0.7), 0 0 15px rgba(168, 85, 247, 0.5);
+            color: #ffffff;
+        }
+
+        .btn-open:active { 
+            transform: translateY(1px) scale(0.98); 
+        }
+
+        .btn-share-x { 
+            background: #000000; 
+            color: var(--text-main); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            padding: 14px 20px; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 15px; 
+            font-weight: 700; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+            margin-bottom: 12px; 
+            transition: all 0.3s ease;
+        }
+
+        .btn-share-x:hover {
+            border-color: var(--text-main);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .result-screen { 
+            display: none; 
+            margin-top: 20px; 
+        }
+
+        #game-form { 
+            display: none; 
+        }
+
+        /* ログインテキスト・ユーザー情報 */
+        #login-area p {
+            color: var(--text-sub) !important;
+        }
+
+        #userEmail {
+            color: var(--emerald);
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+        }
+
+        #resultAmount {
+            font-size: 18px; 
+            color: var(--text-main) !important; 
+            font-weight: 700; 
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+        }
+
+        /* 戻りリンクのスタイリング */
+        .return-link {
+            color: var(--emerald) !important; 
+            text-decoration: none; 
+            font-size: 14px; 
+            font-weight: 700; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .return-link:hover {
+            color: #ffffff !important;
+            text-shadow: 0 0 10px var(--emerald);
+        }
+
+        @media (max-width: 480px) { 
+            body { padding: 10px; } 
+            .container { padding: 25px 18px; border-radius: 20px; } 
+        }
     </style>
 </head>
 <body>
@@ -73,19 +280,17 @@
 <div class="container">
     <h1>GanjaFlare Daily Lotto</h1>
     
-<div id="login-area">
-        <p style="color: #636e72; margin-bottom: 25px; font-size: 14px; line-height: 1.4;">Please sign in with Google to play the daily lotto.</p>
+    <div id="login-area">
+        <p style="margin-bottom: 25px; font-size: 14px; line-height: 1.5;">Please sign in with Google to play the daily lotto.</p>
         <div id="g_id_onload" data-client_id="53876794554-8tdrpeeopmkmmv8tuicav3gev3724fd8.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
-        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left" style="display: flex; justify-content: center;"></div>
+        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black" data-text="signin_with" data-size="large" data-logo_alignment="left" style="display: flex; justify-content: center;"></div>
         
-        <!-- ここから追加：公式サイトへの戻りリンク -->
-        <div style="margin-top: 30px; border-top: 1px dashed #e1e4e8; padding-top: 20px; text-align: center;">
-            <a href="https://sites.google.com/view/ganjaflareen/home?authuser=0" 
-               style="color: #2e7d32; text-decoration: none; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
+        <!-- 公式サイトへの戻りリンク -->
+        <div style="margin-top: 30px; border-top: 1px dashed var(--border-glow); padding-top: 20px; text-align: center;">
+            <a href="https://sites.google.com/view/ganjaflareen/home?authuser=0" class="return-link">
                ✨ Return to GanjaFlare Official Website
             </a>
         </div>
-        <!-- ここまで追加 -->
     </div>
     
     <div id="game-form">
@@ -100,7 +305,7 @@
 
         <button class="btn-open" id="openBtn" onclick="startLotto()">OPEN CHEST</button>
         
-        <div style="margin-top: 25px; margin-bottom: 5px; font-size: 13px; color: #2e7d32; font-weight: bold; word-break: break-all;">
+        <div style="margin-top: 25px; margin-bottom: 5px; font-size: 13px; color: var(--text-sub); font-weight: 600; word-break: break-all;">
             Logged in as: <span id="userEmail">---</span>
         </div>
     </div>
@@ -110,7 +315,7 @@
             <img src="" alt="Result" id="resultImgTag">
         </div>
 
-        <div id="resultAmount" style="font-size: 16px; color: #1a1d20; font-weight: 500; margin-bottom: 25px;"></div>
+        <div id="resultAmount"></div>
         
         <button class="btn-share-x" id="shareBtn" onclick="shareOnX()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>

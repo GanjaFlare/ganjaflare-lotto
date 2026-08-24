@@ -87,7 +87,7 @@
         h1 { 
             font-size: 24px; 
             margin-top: 0; 
-            margin-bottom: 25px; 
+            margin-bottom: 15px; 
             color: var(--text-main); 
             font-weight: 800; 
             letter-spacing: -0.5px;
@@ -95,6 +95,15 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+        }
+
+        /* タイトルアニメーションgifのスタイル */
+        .title-gif {
+            width: 140px;
+            height: auto;
+            margin: 0 auto 20px auto;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(52, 211, 153, 0.3));
         }
 
         .input-group { 
@@ -263,6 +272,9 @@
 <div class="container">
     <h1>GanjaFlare Daily Lotto</h1>
     
+    <!-- タイトル下のGIFアニメーション -->
+    <img src="Titlebox.gif" alt="GanjaFlare Chest" class="title-gif">
+
     <div id="login-area">
         <p style="margin-bottom: 25px; font-size: 14px; line-height: 1.5;">Please sign in with Google to play the daily lotto.</p>
         <div id="g_id_onload" data-client_id="53876794554-8tdrpeeopmkmmv8tuicav3gev3724fd8.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
@@ -378,10 +390,10 @@
     }
 
     function shareOnX() {
-    const messageText = `🎰 Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' || lastLottoAmount === 0 ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}`;
-    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(messageText)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
-    window.open(xUrl, '_blank'); 
-}
+        const messageText = `🎰 Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' || lastLottoAmount === 0 ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}`;
+        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(messageText)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
+        window.open(xUrl, '_blank'); 
+    }
 
     function resetGame() {
         document.getElementById('game-form').style.display = 'block';

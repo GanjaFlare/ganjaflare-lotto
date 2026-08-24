@@ -378,11 +378,10 @@
     }
 
     function shareOnX() {
-        const tagsText = "#GanjaFlare #FlareNetwork $GANJA $FLR $XRP";
-        const messageText = `🎰 Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' || lastLottoAmount === 0 ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}\n\n${tagsText}`;
-        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(messageText)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
-        window.open(xUrl, '_blank'); 
-    }
+    const messageText = `🎰 Played the GanjaFlare Daily Lotto!\n\n${lastLottoTier === 'No Luck' || lastLottoAmount === 0 ? 'Better luck tomorrow!' : 'Hits the ' + lastLottoTier + ' chest and won ' + lastLottoAmount + ' $GANJA!'}`;
+    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(messageText)}&url=${encodeURIComponent(shareUrlForThisResult)}`;
+    window.open(xUrl, '_blank'); 
+}
 
     function resetGame() {
         document.getElementById('game-form').style.display = 'block';
